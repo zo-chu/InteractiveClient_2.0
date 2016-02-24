@@ -1,5 +1,7 @@
 package com.kitanasoftware.interactiveclient.information;
 
+import com.kitanasoftware.interactiveclient.information.Information;
+
 /**
  * Created by dasha on 29/01/16.
  */

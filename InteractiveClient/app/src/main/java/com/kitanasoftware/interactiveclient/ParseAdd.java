@@ -4,9 +4,6 @@ import android.app.Application;
 
 import com.parse.Parse;
 
-/**
- * Created by metkinskiioleg on 14.02.16.
- */
 public class ParseAdd extends Application {
     @Override
     public void onCreate() {
