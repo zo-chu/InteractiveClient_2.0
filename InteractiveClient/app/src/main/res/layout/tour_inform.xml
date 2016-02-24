@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/cv"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="1">
+
+    <TextView
+        android:layout_width="270dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Medium Text"
+        android:id="@+id/tvTourGoal"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="0.25"
+        android:visibility="visible"/>
+
+    <EditText
+        android:layout_width="270dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Medium Text"
+        android:id="@+id/etTourGoal"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="0.25"
+        android:visibility="gone"/>
+
+    <TextView
+        android:layout_width="236dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Small Text"
+        android:id="@+id/tvTour"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="0.06"
+        android:visibility="visible"/>
+
+    <EditText
+        android:layout_width="236dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Small Text"
+        android:id="@+id/etTour"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="0.06"
+        android:visibility="gone"/>
+
+</LinearLayout>
+    </android.support.v7.widget.CardView>

@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">InteractiveGuide</string>
+    //drawer
+
+    <string name="navigation_drawer_open" >Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    //map related strings
+    <string name="addGeopoint">Add geopoint</string>
+    <string name="editGeopoints">Edit geopoints</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+    <string name="addGeopointMess">Add geopoint name and type!</string>
+    <string name="editGeopointMess">Edit geopoints names and types!</string>
+    <string name="typeName">Type a name</string>
+    <string name="chooseType">Choose a type</string>
+    <string name="pickColor">Pick a color</string>
+    <string name="addingMode">Tap on screen to put a new geopoint</string>
+    <string name="delGeo">Delete geopoint</string>
+    <string name="map">Map</string>
+    <string name="audio">Audio</string>
+    <string name="schedule">Schedule</string>
+    <string name="notifications">Notifications</string>
+    <string name="information">Information</string>
+</resources>

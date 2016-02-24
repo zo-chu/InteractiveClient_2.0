@@ -1,0 +1,47 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+    <style name="drawer">
+        <item name="android:fitsSystemWindows">true</item>
+        <item name="android:layout_marginTop">30dp</item>
+
+    </style>
+    <style name="mapButton">
+        <item name="android:background">@drawable/map_rounded_button</item>
+        <item name="android:layout_marginLeft">5dp</item>
+        <item name="android:layout_marginRight">5dp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+    <style name="mapEditText">
+        <item name="android:layout_marginLeft">10dp</item>
+        <item name="android:layout_marginRight">10dp</item>
+        <item name="android:layout_marginBottom">10dp</item>
+        <item name="android:colorFocusedHighlight">@color/mainColor</item>
+        <item name="android:textSize">17sp</item>
+    </style>
+    <style name="dialogTitle" >
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/mainColor</item>
+        <item name="android:layout_margin">10dp</item>
+    </style>
+    <style name="textInlist">
+        <item name="android:layout_marginLeft">10dp</item>
+        <item name="android:textSize">17sp</item>
+        <item name="android:textColor">@color/mainColor</item>
+    </style>
+    <style name="subtextInlist">
+        <item name="android:layout_marginLeft">10dp</item>
+        <item name="android:textColor">@color/subMainColor</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+
+</resources>

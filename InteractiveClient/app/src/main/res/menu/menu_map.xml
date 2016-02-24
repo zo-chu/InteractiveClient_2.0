@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/route" android:title="route" android:icon="@drawable/route" app:showAsAction="always"></item>
+    <item android:id="@+id/allPoints" android:title="allPoints" android:icon="@drawable/empty_point" app:showAsAction="always"></item>
+
+</menu>
