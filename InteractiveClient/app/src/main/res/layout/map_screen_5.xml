@@ -11,7 +11,8 @@
         android:layout_height="match_parent"
         tools:context="com.kitanasoftware.interactiveguide.map.MapScreen_5">
 
-        <com.kitanasoftware.interactiveguide.map.HybridMap xmlns:android="http://schemas.android.com/apk/res/android"
+        <com.kitanasoftware.interactiveclient.map.HybridMap
+            xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/hybridMap"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
