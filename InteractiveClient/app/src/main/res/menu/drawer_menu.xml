@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/drmenu">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/zero"
+            android:checked="false"
+            android:onClick="onDrawerMenuClick"
+            android:title="Main menu" />
+        <item
+            android:id="@+id/button_main_menu"
+            android:checked="false"
+            android:icon="@drawable/main_screen4_logo"
+            android:onClick="onDrawerMenuClick"
+            android:title="Main menu" />
+        <item
+            android:id="@+id/button_map"
+            android:checked="false"
+            android:icon="@drawable/map"
+            android:onClick="onDrawerMenuClick"
+            android:title="Map" />
+
+        <item
+            android:id="@+id/button_audio"
+            android:checked="false"
+            android:icon="@drawable/audio"
+            android:onClick="onDrawerMenuClick"
+            android:title="Audio" />
+        <item
+            android:id="@+id/button_schedule"
+            android:checked="false"
+            android:icon="@drawable/schedule"
+            android:onClick="onDrawerMenuClick"
+            android:title="Schedule" />
+
+        <item
+            android:id="@+id/button_notification"
+            android:checked="false"
+            android:icon="@drawable/notification"
+            android:onClick="onDrawerMenuClick"
+            android:title="Notification" />
+        <item
+            android:id="@+id/button_information"
+            android:checked="false"
+            android:icon="@drawable/information"
+            android:onClick="onDrawerMenuClick"
+            android:title="Information" />
+    </group>
+</menu>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.kitanasoftware.interactiveguide">
+
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"></uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"></uses-permission>
+
+
+    <application
+        android:name=".ParseAdd"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".SplashScreen_1">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".EnterYourNameScreen_2"/>
+        <activity android:name=".Menu_3"
+            android:label="Menu"/>
+        <activity android:name=".MainScreen_4"
+            android:label="Tour"/>
+
+        <activity android:name=".map.MapScreen_5"
+            android:label="Map"/>
+        <activity android:name=".BroadCastScreen_6"
+            android:label="Audio"/>
+        <activity android:name=".NotificationScreen_7"
+            android:label="Notifications"/>
+        <activity android:name=".ScheduleScreen_8"
+            android:label="Schedule"/>
+        <activity android:name=".information.InformatoonScreen_9"
+            android:label="Information"></activity>
+    </application>
+
+</manifest>

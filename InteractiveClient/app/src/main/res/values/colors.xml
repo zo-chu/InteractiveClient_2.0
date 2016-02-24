@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="mapColor">#abdee6</color>
+    <color name="mapTextColor">#0e7d83</color>
+
+    <color name="audioColor">#f8bfd8</color>
+    <color name="audioTextColor">#e6438c</color>
+
+    <color name="scheduleColor">#c9e4ba</color>
+    <color name="scheduleTextColor">#84c561</color>
+
+    <color name="notificationColor">#d7afd2</color>
+    <color name="notificationTextColor">#a55c9b</color>
+
+    <color name="informationColor">#fdc68a</color>
+    <color name="informationTextColor">#cc7f2a</color>
+
+    <color name="mainColor">#127e83</color>
+    <color name="subMainColor">#ff305456</color>
+    <color name="white">#ffffff</color>
+
+
+
+
+
+</resources>
