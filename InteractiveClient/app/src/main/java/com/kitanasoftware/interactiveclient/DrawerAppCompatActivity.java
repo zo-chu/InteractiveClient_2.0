@@ -12,6 +12,7 @@ import android.view.View;
 
 import com.kitanasoftware.interactiveclient.information.InformatoonScreen_9;
 import com.kitanasoftware.interactiveclient.map.MapScreen_5;
+import com.kitanasoftware.interactiveclient.notification.NotificationScreen_7;
 
 
 /**
