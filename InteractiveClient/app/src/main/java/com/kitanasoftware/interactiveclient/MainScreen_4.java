@@ -23,6 +23,7 @@ public class  MainScreen_4 extends AppCompatActivity {
 
         ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#127e83"));
         getSupportActionBar().setBackgroundDrawable(colorDrawable);
+
     }
 
     public void MAPclick(View view) {
