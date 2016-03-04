@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 
+import com.google.gson.Gson;
 import com.kitanasoftware.interactiveclient.Schedule.Schedule;
 import com.kitanasoftware.interactiveclient.information.AdditionalInform;
 import com.kitanasoftware.interactiveclient.information.GuideInform;
@@ -12,7 +13,12 @@ import com.kitanasoftware.interactiveclient.information.Information;
 import com.kitanasoftware.interactiveclient.information.TourInform;
 import com.kitanasoftware.interactiveclient.map.Geopoint;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * Created by dasha on 23/02/16.
@@ -23,16 +29,26 @@ public class WorkWithDb {
     private SQLiteDatabase db;
     private Cursor cursor;
     private static WorkWithDb workWithDb;
+
+    //1. узнать IP server
+    //2. create 3 JASONArray from ourArrayList
+    //3. create JASONObject and put 3 JASONArray
+    //4. put JASONObject to OutPutStream from Serv
+    //5. get from Client mes about "getdb"
+    //6. set JASON
+
     private ArrayList<Information> informList;
     private ArrayList<Schedule> scheduleList;
     private ArrayList<Geopoint> geopointList;
 
-    public ArrayList<Schedule> getScheduleList() {
-        if(scheduleList.size() == 0 ){
-            getSchedule();
-        }
-        return scheduleList;
-    }
+    private HashSet<String> ipList;
+
+    private JSONObject jsonObjectInform;
+
+    private JSONArray jsonArrayGeo;
+
+    private JSONArray jsonArraySchedule;
+
 
     public ArrayList<Information> getInformList() {
         if(informList.size() == 0 ){
@@ -41,11 +57,24 @@ public class WorkWithDb {
         return informList;
     }
 
+    public HashSet<String> getIpList() {
+        if(ipList.size() == 0 ){
+            getClientIp();
+        }
+        return ipList;
+    }
+
     public ArrayList<Geopoint> getGeopointList() {
         if(geopointList.size() == 0 ){
             getGeopoints();
         }
         return geopointList;
+    }
+    public ArrayList<Schedule> getScheduleList() {
+        if(scheduleList.size() == 0 ){
+            getSchedule();
+        }
+        return scheduleList;
     }
 
     private WorkWithDb(Context context) {
@@ -54,6 +83,10 @@ public class WorkWithDb {
         informList = new ArrayList<>();
         scheduleList = new ArrayList<>();
         geopointList = new ArrayList<>();
+        ipList = new HashSet<>();
+        jsonObjectInform = new JSONObject();
+        jsonArrayGeo= new JSONArray();
+        jsonArraySchedule=new JSONArray();
     }
 
     public static WorkWithDb getWorkWithDb(Context context){
@@ -62,8 +95,13 @@ public class WorkWithDb {
         }
         return workWithDb;
     }
+    //!!! need to be created before
+    public static WorkWithDb getWorkWithDb(){
+        return workWithDb;
+    }
 
-    private ArrayList<Information> getInformation(){
+    private ArrayList<Information> getInformation()  {
+
         GuideInform guideInform;
         TourInform tourInform;
         AdditionalInform additionalInform;
@@ -71,23 +109,30 @@ public class WorkWithDb {
         cursor = db.rawQuery("SELECT * FROM information", null);
         int size = cursor.getCount();
         if (size > 0){
-            cursor.moveToFirst();
+            try {
+                cursor.moveToFirst();
+                guideInform = new GuideInform(Information.InformType.GUIDE,
+                        cursor.getString(0), cursor.getString(1));
 
-            guideInform = new GuideInform(Information.InformType.GUIDE,
-                    cursor.getString(1), cursor.getString(2));
-            tourInform = new TourInform(Information.InformType.TOUR,
-                    cursor.getString(3), cursor.getString(4));
-            additionalInform = new AdditionalInform(Information.InformType.ADD, cursor.getString(5));
-            informList.add(0, guideInform);
-            informList.add(1, tourInform);
-            informList.add(2, additionalInform);
+                tourInform = new TourInform(Information.InformType.TOUR,
+                        cursor.getString(2), cursor.getString(3));
+
+                additionalInform = new AdditionalInform(Information.InformType.ADD, cursor.getString(4));
+
+                informList.add(0, guideInform);
+                informList.add(1, tourInform);
+                informList.add(2, additionalInform);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+
 
         }
         return informList;
     }
 
     private ArrayList<Schedule> getSchedule(){
-        int id;
         String time;
         String description;
         cursor = db.rawQuery("SELECT * FROM schedule", null);
@@ -95,10 +140,9 @@ public class WorkWithDb {
         if (size > 0){
             cursor.moveToFirst();
             for (int i = 0; i < size; i++) {
-                id = cursor.getInt(0);
                 time = cursor.getString(1);
                 description = cursor.getString(1);
-                scheduleList.add(new Schedule(id, time, description));
+                scheduleList.add(new Schedule(time, description));
                 cursor.moveToNext();
             }
         }
@@ -106,8 +150,34 @@ public class WorkWithDb {
         return scheduleList;
     }
 
+    public JSONObject getJsonObjectInform() {
+        if(jsonObjectInform.length()==0){
+            getInformation();
+        }
+        return jsonObjectInform;
+    }
+
+    private HashSet<String> getClientIp(){
+        String ip;
+
+        String name;
+
+        cursor = db.rawQuery("SELECT * FROM mygroup", null);
+        int size = cursor.getCount();
+        if (size > 0){
+            cursor.moveToFirst();
+            for (int i = 0; i < size; i++) {
+                ip = cursor.getString(1);
+                //description = cursor.getString(1);
+                ipList.add(ip);
+                cursor.moveToNext();
+            }
+        }
+
+        return ipList;
+    }
     private ArrayList<Geopoint> getGeopoints(){
-        int id; // ! add to Geopoint
+        //int id; // ! add to Geopoint
         String name;
         String type;
         int color;
@@ -119,13 +189,13 @@ public class WorkWithDb {
         if (size > 0){
             cursor.moveToFirst();
             for (int i = 0; i < size; i++) {
-                id = cursor.getInt(0);
+                //id = cursor.getInt(0);
                 name = cursor.getString(1);
                 type = cursor.getString(2);
                 color = cursor.getInt(3);
                 coordinates[0] = cursor.getDouble(4);
                 coordinates[1] = cursor.getDouble(5);
-                //geopointList.add(new Geopoint(id, name, type,color,coordinates));
+                geopointList.add(new Geopoint( name, type,color,coordinates));
                 cursor.moveToNext();
             }
         }
@@ -166,20 +236,62 @@ public class WorkWithDb {
     }
 
     public void addGeopiont(String name, String type, int color, double[] coordinates){
-        int index =getGeopoints().size();
-        db.execSQL("INSERT INTO geopoints VALUES ("+index+", '" + name + "', '" + type+"', " +
-                color + ", " + coordinates[0] +", " + coordinates[1] +")");
-        //getGeopoints().add(new Geopoint(index, name, type, color, coordinates));
+        int index =getGeopointList().size();
+        getGeopointList().add(new Geopoint(name, type, color, coordinates));
+        db.execSQL("INSERT INTO geopoints VALUES (" + index + ", '" + name + "', '" + type + "', " +
+                color + ", " + coordinates[0] + ", " + coordinates[1] + ")");
+
     }
 
     public void addSchedule(String time, String description){
-        int index =getSchedule().size();
-        db.execSQL("INSERT INTO schedule VALUES ("+ index +", '" + time + "', '" + description + "')");
-        getScheduleList().add(new Schedule(index,time,description));
+        int index =getScheduleList().size();
+        getScheduleList().add(new Schedule(time, description));
+        db.execSQL("INSERT INTO schedule VALUES (" + index + ", '" + time + "', '" + description + "')");
+
     }
 
     public void addInformation(String guideName, String guidePhone, String tour, String goal, String company ){
-        int inf_id = getInformation().size();
-        db.execSQL("INSERT INTO information VALUES ('" + inf_id + "','" + guideName + "', '" + guidePhone + "', '" + tour + "','" + goal + "','" + company + "')");
+        int inf_id = getInformList().size();
+        db.execSQL("INSERT INTO information VALUES ('" + guideName + "', '" + guidePhone + "', '" + tour + "','" + goal + "','" + company + "')");
+
+    }
+    public void addIp(String ip ){
+        int inf_id = getIpList().size();
+        db.execSQL("INSERT INTO mygroup VALUES ('" + inf_id + "','" + ip + "')");
+    }
+
+    public void putGeopointsToDb(JSONArray jsonArray){
+        Geopoint geopoint;
+        for (int i=0; i < jsonArray.length(); i++) {
+            try {
+                geopoint = Geopoint.createFromJson(jsonArray.getJSONObject(i));
+                //geopointList.add(geopoint); - am i right ? need to chek dounloading
+                addGeopiont(geopoint.getName(),geopoint.getType(),geopoint.getColor(),geopoint.getCoordinates());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void putScheduleToDb(JSONArray jsonArray){
+        Schedule schedule;
+        for (int i=0; i < jsonArray.length(); i++) {
+            try {
+                schedule = Schedule.createFromJson(jsonArray.getJSONObject(i));
+                //scheduleList.add(schedule);
+                addSchedule(schedule.getTime(), schedule.getDescription());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void putInformationToDb(JSONObject jsonObject){
+            try {
+                addInformation(jsonObject.getString("guide_name"), jsonObject.getString("guide_phone"), jsonObject.getString("tour"),
+                        jsonObject.getString("goal"), jsonObject.getString("company"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
     }
 }
