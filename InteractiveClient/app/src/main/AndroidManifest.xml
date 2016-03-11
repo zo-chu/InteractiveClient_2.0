@@ -9,8 +9,8 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"></uses-permission>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"></uses-permission>
-    <uses-permission android:name="android.permission.SEND_SMS">
-    </uses-permission>
+    <!--<uses-permission android:name="android.permission.SEND_SMS">-->
+    <!--</uses-permission>-->
     <uses-permission android:name="android.permission.RECEIVE_SMS">
     </uses-permission>
 
@@ -45,7 +45,7 @@
         <activity android:name=".BroadCastScreen_6"
             android:screenOrientation="portrait"
             android:label="Audio"/>
-        <activity android:name=".NotificationScreen_7"
+        <activity android:name=".notification.NotificationScreen_7"
             android:screenOrientation="portrait"
             android:label="Notifications"/>
         <activity android:name=".ScheduleScreen_8"

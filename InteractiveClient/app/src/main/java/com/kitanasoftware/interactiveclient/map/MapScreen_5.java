@@ -1,6 +1,6 @@
 package com.kitanasoftware.interactiveclient.map;
 
-import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -17,6 +17,7 @@ import android.view.View;
 
 import com.kitanasoftware.interactiveclient.DrawerAppCompatActivity;
 import com.kitanasoftware.interactiveclient.R;
+import com.kitanasoftware.interactiveclient.db.WorkWithDb;
 
 import org.osmdroid.tileprovider.IRegisterReceiver;
 import org.osmdroid.util.GeoPoint;
@@ -26,21 +27,8 @@ import java.util.ArrayList;
 
 public class MapScreen_5 extends DrawerAppCompatActivity
         implements IRegisterReceiver
-// EditGeo
 {
-//
-//    public static Boolean addingMode = false;
-//    public static Boolean editingMode = false;
-//
-//    private Geopoint editedGeo;
-//    private int editedGeoPosition;
-
     private HybridMap mapView;
-//    private Button creationGeoOk;
-//    private Button creationGeoCancel;
-//    private Button addGeo;
-//    private Button editGeo;
-//    private Button delGeo;
     private ArrayList<OverlayItem> items;
     private MyItemizedOverlay myItemizedOverlay = null;
     private GeoPoint myLocation;
@@ -55,8 +43,24 @@ public class MapScreen_5 extends DrawerAppCompatActivity
 
         //map View
         mapView = (HybridMap) findViewById(R.id.hybridMap);
-        myLocation = getLocation();
-        mapView.center(myLocation.getLatitude(),myLocation.getLongitude());
+
+        Intent intent = getIntent();
+        if (intent.getStringExtra("location") != null) {
+            String strLocation = intent.getStringExtra("location");
+            String[] arrStrLocation = strLocation.split(",");
+            double guideLat = Double.parseDouble(arrStrLocation[0]);
+            double guideLong = Double.parseDouble(arrStrLocation[1]);
+            mapView.center(guideLat, guideLong);
+
+            WorkWithDb.getWorkWithDb().updateGeopointByIndex(0, "My Guide", "Guide",
+                    GeopointsData.getInstance().getCOLORS().get(0),
+                    new double[]{guideLat,guideLong});
+            createOverlay();
+        } else {
+            myLocation = getLocation();
+            mapView.center(myLocation.getLatitude(), myLocation.getLongitude());
+        }
+
 
         //add geopoints on map
         createOverlay();
@@ -65,20 +69,26 @@ public class MapScreen_5 extends DrawerAppCompatActivity
 
     public void createOverlay() {
         items = new ArrayList<>();
-        ArrayList<Geopoint> geopoints = GeopointsData.getInstance().getGeopoints();
-
-        for (int i = 0; i < geopoints.size(); i++) {
-            OverlayItem newItem = new OverlayItem(geopoints.get(i).getName(),
-                    geopoints.get(i).getType(),
-                    new GeoPoint(geopoints.get(i).getCoordinates()[0],
-                            geopoints.get(i).getCoordinates()[1]));
-            Drawable marker = getResources().getDrawable(
-                    geopoints.get(i).getColor());
-            newItem.setMarker(marker);
-            items.add(newItem);
+        ArrayList<Geopoint> geopoints;
+        if(WorkWithDb.getWorkWithDb().getGeopointList() != null) {
+             geopoints = WorkWithDb.getWorkWithDb().getGeopointList();
         }
-        myItemizedOverlay = new MyItemizedOverlay(this, items);
-        mapView.setOverlay(myItemizedOverlay);
+        else geopoints = new ArrayList<>();
+
+        if (geopoints.size() != 0) {
+            for (int i = 0; i < geopoints.size(); i++) {
+                OverlayItem newItem = new OverlayItem(geopoints.get(i).getName(),
+                        geopoints.get(i).getType(),
+                        new GeoPoint(geopoints.get(i).getCoordinates()[0],
+                                geopoints.get(i).getCoordinates()[1]));
+                Drawable marker = getResources().getDrawable(
+                        geopoints.get(i).getColor());
+                newItem.setMarker(marker);
+                items.add(newItem);
+            }
+            myItemizedOverlay = new MyItemizedOverlay(this, items);
+            mapView.setOverlay(myItemizedOverlay);
+        }
     }
 
     public GeoPoint getLocation() {
@@ -93,21 +103,24 @@ public class MapScreen_5 extends DrawerAppCompatActivity
                         android.Manifest.permission.ACCESS_COARSE_LOCATION)
                         != PackageManager.PERMISSION_GRANTED) {
 
-            return myLocation = new GeoPoint(0,0);
+            return myLocation = new GeoPoint(0, 0);
         }
         Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         if (location != null) {
 
-            myLocation = new GeoPoint(location.getLatitude(),location.getLongitude());
-        }
-        else{
-            myLocation = new GeoPoint(0,0);
+            myLocation = new GeoPoint(location.getLatitude(), location.getLongitude());
+        } else {
+            myLocation = new GeoPoint(0, 0);
         }
         lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10, 10, new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
-//                mapView.getController().animateTo(myLocation);
                 mapView.center(myLocation.getLatitude(), myLocation.getLongitude());
+                WorkWithDb.getWorkWithDb().updateGeopointByIndex(1, "My location", "Me",
+                        GeopointsData.getInstance().getCOLORS().get(2),
+                        new double[]{myLocation.getLatitude(), myLocation.getLongitude()});
+                createOverlay();
+                System.out.println("Location updated!");
             }
 
             @Override
@@ -148,6 +161,7 @@ public class MapScreen_5 extends DrawerAppCompatActivity
         }
         return super.onOptionsItemSelected(item);
     }
+
     @Override
     public View getContentView() {
         return getLayoutInflater().inflate(R.layout.map_screen_5, null);

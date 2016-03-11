@@ -12,6 +12,7 @@ import com.kitanasoftware.interactiveclient.information.GuideInform;
 import com.kitanasoftware.interactiveclient.information.Information;
 import com.kitanasoftware.interactiveclient.information.TourInform;
 import com.kitanasoftware.interactiveclient.map.Geopoint;
+import com.kitanasoftware.interactiveclient.map.GeopointsData;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -92,6 +93,7 @@ public class WorkWithDb {
     public static WorkWithDb getWorkWithDb(Context context){
         if(workWithDb==null){
             workWithDb = new WorkWithDb(context);
+
         }
         return workWithDb;
     }
@@ -206,7 +208,7 @@ public class WorkWithDb {
     public void updateGeopointByIndex(int index, String name, String type, int color, double[] coordinates){
         Geopoint geopoint = geopointList.get(index);
         db.execSQL("UPDATE geopoints set name='" + name + "',type='" + type+"',color= " +
-                color + "lan=" + coordinates[0] +", lon=" + coordinates[1] +" WHERE id=" + index + "");
+                color + ",lat=" + coordinates[0] +", lon=" + coordinates[1] +" WHERE id=" + index + "");
 
         geopoint.setName(name);
         geopoint.setType(type);

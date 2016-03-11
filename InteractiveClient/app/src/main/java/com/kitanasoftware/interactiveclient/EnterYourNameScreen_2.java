@@ -28,6 +28,7 @@ public class  EnterYourNameScreen_2 extends AppCompatActivity {
     WifiManager wifiMgr;
     WifiInfo wifiInfo;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +62,7 @@ public class  EnterYourNameScreen_2 extends AppCompatActivity {
                     @Override
                     public void run() {
                         try {
+
                             Thread.sleep(3000);
                             startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
 

@@ -40,7 +40,6 @@ public class InformatoonScreen_9 extends DrawerAppCompatActivity {
 
     Bitmap bitPhoto;
     String photoPath;
-    WorkWithDb workWithDb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,12 +47,13 @@ public class InformatoonScreen_9 extends DrawerAppCompatActivity {
 
         ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#fdc68a"));
         getSupportActionBar().setBackgroundDrawable(colorDrawable);
-        workWithDb = WorkWithDb.getWorkWithDb();
-        informList = workWithDb.getInformList();
-        adapter = new InformationAdapter(getApplicationContext(), informList);
-        listView = (ListView) findViewById(R.id.lvInform);
-        listView.setAdapter(adapter);
 
+        if(WorkWithDb.getWorkWithDb().getInformList() != null) {
+            informList = WorkWithDb.getWorkWithDb().getInformList();
+            adapter = new InformationAdapter(getApplicationContext(), informList);
+            listView = (ListView) findViewById(R.id.lvInform);
+            listView.setAdapter(adapter);
+        }
     }
 
     @Override

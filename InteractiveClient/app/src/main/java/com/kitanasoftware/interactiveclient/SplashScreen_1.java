@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import com.kitanasoftware.interactiveclient.dataTransfer.StartConn;
 import com.kitanasoftware.interactiveclient.db.WorkWithDb;
+import com.kitanasoftware.interactiveclient.map.GeopointsData;
 
 public class  SplashScreen_1 extends AppCompatActivity {
     WorkWithDb workWithDb;
