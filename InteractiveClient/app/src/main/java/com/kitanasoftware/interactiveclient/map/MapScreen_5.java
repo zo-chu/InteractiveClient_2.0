@@ -17,6 +17,7 @@ import android.view.View;
 
 import com.kitanasoftware.interactiveclient.DrawerAppCompatActivity;
 import com.kitanasoftware.interactiveclient.R;
+import com.kitanasoftware.interactiveclient.db.WorkWithDb;
 
 import org.osmdroid.tileprovider.IRegisterReceiver;
 import org.osmdroid.util.GeoPoint;
@@ -65,7 +66,11 @@ public class MapScreen_5 extends DrawerAppCompatActivity
 
     public void createOverlay() {
         items = new ArrayList<>();
-        ArrayList<Geopoint> geopoints = GeopointsData.getInstance().getGeopoints();
+        //ArrayList<Geopoint> geopoints = GeopointsData.getInstance().getGeopoints();
+
+
+        //from db
+        ArrayList<Geopoint> geopoints = WorkWithDb.getWorkWithDb().getGeopointList();
 
         for (int i = 0; i < geopoints.size(); i++) {
             OverlayItem newItem = new OverlayItem(geopoints.get(i).getName(),
