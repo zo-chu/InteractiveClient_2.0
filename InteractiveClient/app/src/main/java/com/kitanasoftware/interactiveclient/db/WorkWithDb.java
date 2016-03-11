@@ -13,6 +13,7 @@ import com.kitanasoftware.interactiveclient.information.Information;
 import com.kitanasoftware.interactiveclient.information.TourInform;
 import com.kitanasoftware.interactiveclient.map.Geopoint;
 import com.kitanasoftware.interactiveclient.map.GeopointsData;
+import com.kitanasoftware.interactiveclient.notification.MyNotification;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,7 +50,30 @@ public class WorkWithDb {
     private JSONArray jsonArrayGeo;
 
     private JSONArray jsonArraySchedule;
+    private ArrayList<MyNotification> notificationList;
+    public ArrayList<MyNotification> getNotificationList() {
+        if(notificationList.size() == 0 ){
+            getNotifications();
+        }
+        return notificationList;
+    }
+    private ArrayList<MyNotification> getNotifications(){
+        String sentTo;
+        String text;
+        cursor = db.rawQuery("SELECT * FROM notifications", null);
+        int size = cursor.getCount();
+        if (size > 0){
+            cursor.moveToFirst();
+            for (int i = 0; i < size; i++) {
+                sentTo = cursor.getString(0);
+                text = cursor.getString(1);
+                notificationList.add(new MyNotification(sentTo, text));
+                cursor.moveToNext();
+            }
+        }
 
+        return notificationList;
+    }
 
     public ArrayList<Information> getInformList() {
         if(informList.size() == 0 ){
@@ -255,6 +279,12 @@ public class WorkWithDb {
     public void addInformation(String guideName, String guidePhone, String tour, String goal, String company ){
         int inf_id = getInformList().size();
         db.execSQL("INSERT INTO information VALUES ('" + guideName + "', '" + guidePhone + "', '" + tour + "','" + goal + "','" + company + "')");
+
+    }
+    public void addNotification(String sentTo, String text){
+        int index =getNotificationList().size();
+        getScheduleList().add(new Schedule(sentTo, text));
+        db.execSQL("INSERT INTO notifications VALUES (" + index + ", '" + sentTo + "', '" + text + "')");
 
     }
     public void addIp(String ip ){
