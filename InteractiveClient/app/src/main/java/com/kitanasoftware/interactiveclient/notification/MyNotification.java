@@ -8,6 +8,7 @@ public class MyNotification {
     private String sentTo;
     private String text;
 
+
     public MyNotification(String sentTo, String text) {
         this.sentTo = sentTo;
         this.text = text;

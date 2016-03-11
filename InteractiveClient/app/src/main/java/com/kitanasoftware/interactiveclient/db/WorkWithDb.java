@@ -51,7 +51,7 @@ public class WorkWithDb {
 
     private JSONArray jsonArraySchedule;
     private ArrayList<MyNotification> notificationList;
-    public ArrayList<MyNotification> getNotificationList() {
+    public ArrayList<MyNotification>  getNotificationList() {
         if(notificationList.size() == 0 ){
             getNotifications();
         }
