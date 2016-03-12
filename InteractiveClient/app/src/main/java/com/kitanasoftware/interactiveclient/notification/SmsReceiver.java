@@ -7,31 +7,46 @@ import android.os.Bundle;
 import android.telephony.gsm.SmsMessage;
 import android.widget.Toast;
 
+import com.kitanasoftware.interactiveclient.map.MapScreen_5;
+
+import java.io.Console;
+
 /**
  * Created by Chudo on 24.02.2016.
  */
 public class SmsReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        Bundle bundle= intent.getExtras();
-        SmsMessage[] msgs=null;
-        String str="";
-        if(bundle!=null)
-        {
+        Bundle bundle = intent.getExtras();
+        SmsMessage[] msgs = null;
+        String location = "";
+        String themess = "";
 
-            Object[] pdus=(Object[]) bundle.get("pdus");
-            msgs=new SmsMessage[pdus.length];
-            for(int i=0; i<msgs.length; i++){
-                msgs[i]= SmsMessage.createFromPdu((byte[]) pdus[i]);
-                str+="SMS from "+ msgs[i].getOriginatingAddress();
-                str+=" :";
-                str+= msgs[i].getMessageBody().toString();
-                str+="\n";
+
+        if (bundle != null) {
+            Object[] pdus = (Object[]) bundle.get("pdus");
+            msgs = new SmsMessage[pdus.length];
+            for (int i = 0; i < msgs.length; i++) {
+                msgs[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
+                location += msgs[i].getMessageBody().toString();
+                themess = location;
+                int ind = location.lastIndexOf("[");
+                location = location.substring(ind + 1, location.length() - 1);
+
+                int end = themess.lastIndexOf("My location");
+                themess = themess.substring(0, end);
+            }
+            System.out.println("MESSAGE NEEDS TO BE SAVED " + themess);
+            Intent i = new Intent(context, MapScreen_5.class);
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            if (!location.equals("")) {
+                i.putExtra("location", location);
+                context.startActivity(i);
             }
 
-            Toast.makeText(context, str, Toast.LENGTH_SHORT).show();
         }
+
     }
-    }
+}
 
 

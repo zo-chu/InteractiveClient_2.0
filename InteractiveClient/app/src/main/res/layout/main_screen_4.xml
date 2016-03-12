@@ -1,100 +1,128 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
+    android:layout_weight="100"
+    android:orientation="vertical"
+    android:weightSum="100"
     tools:context="com.kitanasoftware.interactiveguide.MainActivity_4">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="30"
+        android:orientation="vertical">
 
-    <ImageView
-        android:layout_width="100dp"
-        android:layout_height="90dp"
-        android:id="@+id/imageView"
-        android:background="@drawable/main_screen4_logo"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
-    <Button
-        android:layout_width="310dp"
-        android:layout_height="63dp"
-        android:onClick="MAPclick"
-        android:text="@string/map"
-        android:textColor="@color/mapTextColor"
-        android:textAlignment="center"
-        android:textSize="20dp"
-        android:background="@color/mapColor"
-        android:drawableLeft="@drawable/map"
-        android:id="@+id/button2"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="100dp" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    <Button
-        android:layout_width="310dp"
-        android:layout_height="63dp"
-        android:onClick="AUDIOclick"
-        android:background="@color/audioColor"
-        android:text="@string/audio"
-        android:textColor="@color/audioTextColor"
-        android:textAlignment="center"
-        android:textSize="20dp"
-        android:drawableLeft="@drawable/audio"
-        android:id="@+id/button3"
-        android:layout_below="@+id/button2"
-        android:layout_alignLeft="@+id/button2"
-        android:layout_alignStart="@+id/button2"
-        android:layout_marginTop="10dp" />
-    />
-
-    <Button
-        android:layout_width="310dp"
-        android:layout_height="63dp"
-        android:onClick="SCHEDULEclick"
-        android:background="@color/scheduleColor"
-        android:text="@string/schedule"
-        android:textColor="@color/scheduleTextColor"
-        android:textAlignment="center"
-        android:textSize="20dp"
-        android:drawableLeft="@drawable/schedule"
-        android:id="@+id/button4"
-        android:layout_below="@+id/button3"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp" />
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:layout_gravity="center"
+                android:background="@drawable/main_screen4_logo" />
+        </RelativeLayout>
+    </LinearLayout>
 
 
-    <Button
-        android:layout_width="310dp"
-        android:layout_height="63dp"
-        android:onClick="NOTIFICATIONSclick"
-        android:background="@color/notificationColor"
-        android:text="@string/notifications"
-        android:textColor="@color/notificationTextColor"
-        android:textAlignment="center"
-        android:textSize="20dp"
-        android:drawableLeft="@drawable/notification"
-        android:id="@+id/button5"
-        android:layout_below="@+id/button4"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="70"
+        android:orientation="vertical"
+        android:padding="10dp"
+        android:weightSum="50">
+
+        <Button
+            android:id="@+id/button2"
+            style="@style/mainScreenButton"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="10"
+            android:background="@color/mapColor"
+            android:drawableLeft="@drawable/map_small"
+            android:drawablePadding="-40dp"
+            android:onClick="MAPclick"
+            android:paddingLeft="40dp"
+            android:text="@string/map"
+            android:textAlignment="center"
+            android:textColor="@color/mapTextColor"
+            android:textSize="20dp" />
+
+        <Button
+            android:id="@+id/button3"
+            style="@style/mainScreenButton"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="10"
+            android:background="@color/audioColor"
+            android:drawableLeft="@drawable/audio_small"
+            android:drawablePadding="-40dp"
+            android:onClick="AUDIOclick"
+            android:paddingLeft="40dp"
+            android:text="@string/audio"
+            android:textAlignment="center"
+            android:textColor="@color/audioTextColor"
+            android:textSize="20dp" />
+
+        <Button
+            android:id="@+id/button4"
+            style="@style/mainScreenButton"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_below="@+id/button3"
+            android:layout_centerHorizontal="true"
+            android:layout_weight="10"
+            android:background="@color/scheduleColor"
+            android:drawableLeft="@drawable/schedule_small"
+            android:drawablePadding="-40dp"
+            android:onClick="SCHEDULEclick"
+            android:paddingLeft="40dp"
+            android:text="@string/schedule"
+            android:textAlignment="center"
+            android:textColor="@color/scheduleTextColor"
+            android:textSize="20dp" />
 
 
-    <Button
-        android:layout_width="310dp"
-        android:layout_height="63dp"
-        android:onClick="INFORMATIIONclick"
-        android:background="@color/informationColor"
-        android:text="@string/information"
-        android:textColor="@color/informationTextColor"
-        android:textAlignment="center"
-        android:textSize="20dp"
-        android:drawableLeft="@drawable/information"
-        android:id="@+id/button6"
-        android:layout_below="@+id/button5"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp" />
+        <Button
+            android:id="@+id/button5"
+            style="@style/mainScreenButton"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_below="@+id/button4"
+            android:layout_weight="10"
+            android:background="@color/notificationColor"
+            android:drawableLeft="@drawable/notification_small"
+            android:drawablePadding="-40dp"
+            android:onClick="NOTIFICATIONSclick"
+            android:paddingLeft="40dp"
+            android:text="@string/notifications"
+            android:textAlignment="center"
+            android:textColor="@color/notificationTextColor"
+            android:textSize="20dp" />
 
 
-</RelativeLayout>
+        <Button
+            android:id="@+id/button6"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_below="@+id/button5"
+            android:layout_centerHorizontal="true"
+            android:layout_weight="10"
+            android:background="@color/informationColor"
+            android:drawableLeft="@drawable/information_small"
+            android:drawablePadding="-40dp"
+            android:onClick="INFORMATIIONclick"
+            android:paddingLeft="40dp"
+            android:text="@string/information"
+            android:textAlignment="center"
+            android:textColor="@color/informationTextColor"
+            android:textSize="20dp" />
+
+    </LinearLayout>
+</LinearLayout>
