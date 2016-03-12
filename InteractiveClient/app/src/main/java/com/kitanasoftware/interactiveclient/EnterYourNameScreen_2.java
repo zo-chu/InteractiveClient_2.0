@@ -92,8 +92,8 @@ public class  EnterYourNameScreen_2 extends AppCompatActivity {
             ip = WifiUtility.getIpAddress();
         }
 
-        GetIp getIp = new GetIp(getApplicationContext());
-        getIp.start();
+//        GetIp getIp = new GetIp(getApplicationContext());
+//        getIp.start();
 
 
         sp = getSharedPreferences("editor", MODE_PRIVATE);
