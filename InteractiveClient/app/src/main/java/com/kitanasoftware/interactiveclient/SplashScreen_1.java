@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.kitanasoftware.interactiveclient.dataTransfer.GetIp;
 import com.kitanasoftware.interactiveclient.dataTransfer.StartConn;
 import com.kitanasoftware.interactiveclient.db.WorkWithDb;
 
@@ -17,8 +18,8 @@ public class  SplashScreen_1 extends AppCompatActivity {
         workWithDb = WorkWithDb.getWorkWithDb(getApplicationContext());
 
         //if there is conn !!
-        Intent intent = new Intent(getApplicationContext(), StartConn.class);
-        startService(intent);
+
+
 
         Thread timerThread = new Thread(){
             public void run(){

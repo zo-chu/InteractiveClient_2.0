@@ -24,7 +24,7 @@
             android:layout_marginTop="30dp"
             android:background="@drawable/headphones" />
 
-        <ToggleButton
+        <ImageView
             android:id="@+id/button11"
             android:layout_width="80dp"
             android:layout_height="80dp"
