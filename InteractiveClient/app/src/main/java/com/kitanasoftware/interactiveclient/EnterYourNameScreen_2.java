@@ -15,11 +15,20 @@ import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.format.Formatter;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 
+import com.kitanasoftware.interactiveclient.Broadcast.WifiUtility;
+import com.kitanasoftware.interactiveclient.dataTransfer.GetIp;
+import com.kitanasoftware.interactiveclient.dataTransfer.StartConn;
 import com.kitanasoftware.interactiveclient.db.WorkWithDb;
+
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.util.Enumeration;
 
 public class  EnterYourNameScreen_2 extends AppCompatActivity {
 
@@ -28,7 +37,6 @@ public class  EnterYourNameScreen_2 extends AppCompatActivity {
     EditText number;
     String ip;
     WifiManager wifiMgr;
-    WifiInfo wifiInfo;
 
 
     @Override
@@ -81,23 +89,59 @@ public class  EnterYourNameScreen_2 extends AppCompatActivity {
     public void OKclick(View view) {
 
         if (wifiMgr.isWifiEnabled()){
-            wifiMgr = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-            wifiInfo = wifiMgr.getConnectionInfo();
-            int ipAddress = wifiInfo.getIpAddress();
-            ip = String.format("%d.%d.%d.%d", (ipAddress & 0xff),
-                    (ipAddress >> 8 & 0xff), (ipAddress >> 16 & 0xff), (ipAddress >> 24 & 0xff));
-
+            ip = WifiUtility.getIpAddress();
         }
+
+        GetIp getIp = new GetIp(getApplicationContext());
+        getIp.start();
+
 
         sp = getSharedPreferences("editor", MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
 
         editor.putString("name", name.getText().toString());
         editor.putString("number", number.getText().toString());
-        editor.putString("ip", ip);
+
         editor.commit();
+
+
 
         Intent intent = new Intent(getApplicationContext(),MainScreen_4.class);
         startActivity(intent);
+    }
+
+    public static String getIpAddress() {
+
+        InetAddress inetAddress = null;
+        InetAddress myAddress = null;
+
+        try {
+            for (Enumeration < NetworkInterface > networkInterface = NetworkInterface.getNetworkInterfaces();
+                 networkInterface.hasMoreElements();) {
+
+                NetworkInterface singleInterface = networkInterface.nextElement();
+
+                for (Enumeration < InetAddress > IpAddresses = singleInterface.getInetAddresses();
+                     IpAddresses.hasMoreElements();) {
+
+                    inetAddress = IpAddresses.nextElement();
+
+                    if (!inetAddress.isLoopbackAddress() &&
+                            (singleInterface.getDisplayName().contains("wlan0") ||
+                                    singleInterface.getDisplayName().contains("eth0") ||
+                                    singleInterface.getDisplayName().contains("ap0"))) {
+                        myAddress = inetAddress;
+
+                    }
+
+                }
+            }
+
+        } catch (SocketException ex) {
+            ex.printStackTrace();
+        }
+
+
+        return myAddress.getHostAddress();
     }
 }

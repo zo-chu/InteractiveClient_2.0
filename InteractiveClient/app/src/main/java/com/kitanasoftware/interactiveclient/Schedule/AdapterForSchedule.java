@@ -9,6 +9,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.kitanasoftware.interactiveclient.R;
+import com.kitanasoftware.interactiveclient.db.WorkWithDb;
 
 
 /**
@@ -25,7 +26,13 @@ public class AdapterForSchedule extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return ScheduleSingleton.getInstance().arrTime.size();
+        int x = 0;
+        try {
+            x = WorkWithDb.getWorkWithDb().getScheduleList().size();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return x;
     }
 
 
@@ -48,14 +55,13 @@ public class AdapterForSchedule extends BaseAdapter {
                 context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         RelativeLayout r1 = (RelativeLayout) inflater.inflate(R.layout.schedule_screen_item, viewGroup, false);
 
-
-
+        Schedule schedule = WorkWithDb.getWorkWithDb().getScheduleList().get(position);
 
         TextView tvTime = (TextView) r1.findViewById(R.id.textView3);
         TextView tvDestination = (TextView) r1.findViewById(R.id.textView4);
 
-        String time= ScheduleSingleton.getInstance().getArrTime().get(position);
-        String destination = ScheduleSingleton.getInstance().getArrDestination().get(position);
+        String time= schedule.getTime();
+        String destination = schedule.getDescription();
 
         tvTime.setText(time);
         tvDestination.setText(destination);

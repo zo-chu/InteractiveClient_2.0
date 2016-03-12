@@ -2,6 +2,7 @@ package com.kitanasoftware.interactiveclient.dataTransfer;
 
 import android.app.Service;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.wifi.WifiManager;
 import android.os.IBinder;
 import android.text.format.Formatter;
@@ -10,6 +11,8 @@ import android.widget.Toast;
 public class StartConn extends Service {
     public StartConn() {
     }
+
+    SharedPreferences sp;
 
     @Override
     public void onCreate() {
@@ -20,8 +23,14 @@ public class StartConn extends Service {
         WifiManager wm = (WifiManager) getSystemService(WIFI_SERVICE);
         String ip = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
 
-        ClientConn clientConn = new ClientConn(ip);
+        sp = getSharedPreferences("editor", MODE_PRIVATE);
+        String ipServer = sp.getString("ip","");
+
+        ClientConn clientConn = new ClientConn(ip, ipServer);
         clientConn.start();
+
+        Intent intent2 = new Intent(getApplicationContext(), StartConn.class);
+        startService(intent2);
     }
 
     @Override

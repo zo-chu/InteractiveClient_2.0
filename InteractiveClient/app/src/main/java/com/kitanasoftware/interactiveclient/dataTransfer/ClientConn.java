@@ -1,5 +1,8 @@
 package com.kitanasoftware.interactiveclient.dataTransfer;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
 import com.kitanasoftware.interactiveclient.db.WorkWithDb;
 import com.kitanasoftware.interactiveclient.information.GuideInform;
 import com.kitanasoftware.interactiveclient.map.Geopoint;
@@ -22,6 +25,10 @@ public class ClientConn extends Thread{
     String phone;
     String ip;
     ObjectInputStream objectInputStream;
+    String serverIp;
+    SharedPreferences sp;
+
+
 
     public ClientConn(String name, String phone, String ip) {
         this.name = name;
@@ -29,17 +36,25 @@ public class ClientConn extends Thread{
         this.ip = ip;
     }
 
-    public ClientConn(String ip) {
+    public ClientConn(String ip, String serverIp) {
         this.ip = ip;
+        this.serverIp = serverIp;
     }
+
+
+
 
     @Override
     public void run() {
         super.run();
 
+
+
         Socket socket = null;
         try {
-            socket = new Socket("172.22.23.43", 5002);
+
+
+            socket = new Socket(serverIp, 5002);
             PrintWriter pw = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
             pw.println(ip);
             pw.flush();

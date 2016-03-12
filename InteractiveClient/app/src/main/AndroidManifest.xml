@@ -48,6 +48,7 @@
         <activity android:name=".notification.NotificationScreen_7"
             android:screenOrientation="portrait"
             android:label="Notifications"/>
+
         <activity android:name=".ScheduleScreen_8"
             android:screenOrientation="portrait"
             android:label="Schedule"/>
@@ -60,6 +61,11 @@
                     "android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
         </receiver>
+
+        <service android:name=".dataTransfer.StartConn"
+            android:enabled="true"
+            android:exported="true"/>
+
     </application>
 
 
