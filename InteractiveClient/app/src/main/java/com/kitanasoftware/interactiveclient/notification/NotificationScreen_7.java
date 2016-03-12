@@ -31,7 +31,8 @@ public class NotificationScreen_7 extends DrawerAppCompatActivity {
     public View getContentView() {
         return getLayoutInflater().inflate(R.layout.notification_screen_7, null);
     }
-    private void getList(){
+
+    private void getList() {
         ArrayList<MyNotification> notifs = WorkWithDb.getWorkWithDb().getNotificationList();
         if (notifs != null) {
             ArrayList<String> receivedMess = new ArrayList<>();
@@ -43,7 +44,7 @@ public class NotificationScreen_7 extends DrawerAppCompatActivity {
             if (receivedMess.size() != 0) {
                 if (receivedMess.size() != 0) {
                     ListView recievedMessList = (ListView) findViewById(R.id.recievedNotifList);
-                    ArrayAdapter<String> listAdapter= new ArrayAdapter<String>(getApplicationContext(),
+                    ArrayAdapter<String> listAdapter = new ArrayAdapter<String>(getApplicationContext(),
                             R.layout.one_string_list, receivedMess);
                     recievedMessList.setAdapter(listAdapter);
                 }

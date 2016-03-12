@@ -37,7 +37,7 @@ public class SmsReceiver extends BroadcastReceiver {
                 int end = themess.lastIndexOf("My location");
                 themess = themess.substring(0, end);
             }
-            WorkWithDb.getWorkWithDb().addNotification("Guide",themess);
+            WorkWithDb.getWorkWithDb().addNotification("Guide", themess);
             Intent i = new Intent(context, MapScreen_5.class);
             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             if (!location.equals("")) {
