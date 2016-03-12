@@ -6,7 +6,7 @@
             android:id="@+id/zero"
             android:checked="false"
             android:onClick="onDrawerMenuClick"
-            android:title="Main menu" />
+            android:title="" />
         <item
             android:id="@+id/button_main_menu"
             android:checked="false"

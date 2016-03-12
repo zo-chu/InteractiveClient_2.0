@@ -68,7 +68,11 @@ public class WifiUtility {
             } catch (SocketException ex) {
                 ex.printStackTrace();
             }
-            return myAddress.getHostAddress();
+            if(myAddress.getHostAddress() !=null){
+                return myAddress.getHostAddress();
+            }
+            else return null;
+
         }
 
 

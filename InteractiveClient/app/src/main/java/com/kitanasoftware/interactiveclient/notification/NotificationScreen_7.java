@@ -33,8 +33,8 @@ public class NotificationScreen_7 extends DrawerAppCompatActivity {
     }
 
     private void getList() {
-        ArrayList<MyNotification> notifs = WorkWithDb.getWorkWithDb().getNotificationList();
-        if (notifs != null) {
+        if (WorkWithDb.getWorkWithDb().getNotificationList().size() != 0) {
+            ArrayList<MyNotification> notifs = WorkWithDb.getWorkWithDb().getNotificationList();
             ArrayList<String> receivedMess = new ArrayList<>();
             String tmp = "";
             for (int i = 0; i < notifs.size(); i++) {
@@ -48,6 +48,7 @@ public class NotificationScreen_7 extends DrawerAppCompatActivity {
                             R.layout.one_string_list, receivedMess);
                     recievedMessList.setAdapter(listAdapter);
                 }
+
             }
         }
     }
