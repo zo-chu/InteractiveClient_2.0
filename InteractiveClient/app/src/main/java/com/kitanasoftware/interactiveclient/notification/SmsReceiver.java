@@ -19,22 +19,28 @@ public class SmsReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Bundle bundle = intent.getExtras();
         SmsMessage[] msgs = null;
-        String str = "";
+        String location = "";
+        String themess = "";
+
 
         if (bundle != null) {
             Object[] pdus = (Object[]) bundle.get("pdus");
             msgs = new SmsMessage[pdus.length];
             for (int i = 0; i < msgs.length; i++) {
                 msgs[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
-                str += msgs[i].getMessageBody().toString();
-                int ind = str.lastIndexOf("[");
-                str = str.substring(ind+1, str.length()-1);
+                location += msgs[i].getMessageBody().toString();
+                themess = location;
+                int ind = location.lastIndexOf("[");
+                location = location.substring(ind + 1, location.length() - 1);
 
+                int end = themess.lastIndexOf("My location");
+                themess = themess.substring(0, end);
             }
+            System.out.println("MESSAGE NEEDS TO BE SAVED " + themess);
             Intent i = new Intent(context, MapScreen_5.class);
             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            if (!str.equals("")) {
-                i.putExtra("location", str);
+            if (!location.equals("")) {
+                i.putExtra("location", location);
                 context.startActivity(i);
             }
 
