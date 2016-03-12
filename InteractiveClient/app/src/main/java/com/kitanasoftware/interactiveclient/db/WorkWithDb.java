@@ -67,8 +67,8 @@ public class WorkWithDb {
         if (size > 0) {
             cursor.moveToFirst();
             for (int i = 0; i < size; i++) {
-                sentTo = cursor.getString(0);
-                text = cursor.getString(1);
+                sentTo = cursor.getString(1);
+                text = cursor.getString(2);
                 notificationList.add(new MyNotification(sentTo, text));
                 cursor.moveToNext();
             }
@@ -111,6 +111,7 @@ public class WorkWithDb {
         informList = new ArrayList<>();
         scheduleList = new ArrayList<>();
         geopointList = new ArrayList<>();
+        notificationList = new ArrayList<>();
         ipList = new HashSet<>();
         jsonObjectInform = new JSONObject();
         jsonArrayGeo = new JSONArray();

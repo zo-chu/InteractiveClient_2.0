@@ -19,6 +19,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 
+import com.kitanasoftware.interactiveclient.db.WorkWithDb;
+
 public class  EnterYourNameScreen_2 extends AppCompatActivity {
 
     SharedPreferences sp;
@@ -33,6 +35,8 @@ public class  EnterYourNameScreen_2 extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.enter_your_name_screen_2);
+
+        WorkWithDb.getWorkWithDb(getApplicationContext());
 
         wifiMgr = (WifiManager) getSystemService(Context.WIFI_SERVICE);
         name = (EditText) findViewById(R.id.editText);

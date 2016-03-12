@@ -10,8 +10,11 @@ import android.widget.ListView;
 
 import com.kitanasoftware.interactiveclient.DrawerAppCompatActivity;
 import com.kitanasoftware.interactiveclient.R;
+import com.kitanasoftware.interactiveclient.db.WorkWithDb;
 
-public class  NotificationScreen_7 extends DrawerAppCompatActivity {
+import java.util.ArrayList;
+
+public class NotificationScreen_7 extends DrawerAppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,15 +23,31 @@ public class  NotificationScreen_7 extends DrawerAppCompatActivity {
         ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#d7afd2"));
         getSupportActionBar().setBackgroundDrawable(colorDrawable);
 
-//        ListView recievedMess = (ListView) findViewById(R.id.recievedNotifList);
-//        recievedMess.setAdapter(new ArrayAdapter<String>(getApplicationContext(),R.layout.));
+        getList();
+
     }
 
     @Override
     public View getContentView() {
-        return getLayoutInflater().inflate(R.layout.notification_screen_7,null);
-
-
-
+        return getLayoutInflater().inflate(R.layout.notification_screen_7, null);
+    }
+    private void getList(){
+        ArrayList<MyNotification> notifs = WorkWithDb.getWorkWithDb().getNotificationList();
+        if (notifs != null) {
+            ArrayList<String> receivedMess = new ArrayList<>();
+            String tmp = "";
+            for (int i = 0; i < notifs.size(); i++) {
+                tmp += "From: " + notifs.get(i).getSentTo() + " Message: " + notifs.get(i).getText();
+                receivedMess.add(tmp);
+            }
+            if (receivedMess.size() != 0) {
+                if (receivedMess.size() != 0) {
+                    ListView recievedMessList = (ListView) findViewById(R.id.recievedNotifList);
+                    ArrayAdapter<String> listAdapter= new ArrayAdapter<String>(getApplicationContext(),
+                            R.layout.one_string_list, receivedMess);
+                    recievedMessList.setAdapter(listAdapter);
+                }
+            }
+        }
     }
 }
