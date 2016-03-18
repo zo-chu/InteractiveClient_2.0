@@ -35,19 +35,12 @@ public class ScheduleScreen_8 extends DrawerAppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
-
         ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#c9e4ba"));
         getSupportActionBar().setBackgroundDrawable(colorDrawable);
 
-        lvMain = (ListView) findViewById(R.id.listView);
+        lvMain = (ListView) findViewById(R.id.lv);
         adapterForSchedule = new AdapterForSchedule(getApplicationContext());
-        try {
-             lvMain.setAdapter(adapterForSchedule);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
+        lvMain.setAdapter(adapterForSchedule);
         lvMain.invalidateViews();
     }
 

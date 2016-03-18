@@ -1,8 +1,11 @@
 package com.kitanasoftware.interactiveclient.dataTransfer;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.view.View;
 
+import com.kitanasoftware.interactiveclient.MainScreen_4;
 import com.kitanasoftware.interactiveclient.db.WorkWithDb;
 import com.kitanasoftware.interactiveclient.information.GuideInform;
 import com.kitanasoftware.interactiveclient.map.Geopoint;
@@ -27,8 +30,15 @@ public class ClientConn extends Thread{
     ObjectInputStream objectInputStream;
     String serverIp;
     SharedPreferences sp;
+    private static boolean STATUS=true;
 
+    public static boolean isSTATUS() {
+        return STATUS;
+    }
 
+    public static void setSTATUS(boolean STATUS) {
+        ClientConn.STATUS = STATUS;
+    }
 
     public ClientConn(String name, String phone, String ip) {
         this.name = name;
@@ -39,47 +49,45 @@ public class ClientConn extends Thread{
     public ClientConn(String ip, String serverIp) {
         this.ip = ip;
         this.serverIp = serverIp;
+
     }
-
-
-
 
     @Override
     public void run() {
         super.run();
 
-
-
         Socket socket = null;
         try {
 
+                    socket = new Socket(serverIp, 5002);
+                    PrintWriter pw = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
+                    pw.println(ip);
+                    pw.flush();
+                    System.out.println("Get db");
+                    objectInputStream = new ObjectInputStream(socket.getInputStream());
+                    String resGeo;
+                    String resSchedual;
+                    String resInfo;
 
-            socket = new Socket(serverIp, 5002);
-            PrintWriter pw = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
-            pw.println(ip);
-            pw.flush();
+                    resGeo = (String) objectInputStream.readObject();
+                    JSONObject jsonObject = new JSONObject(resGeo);
+                    System.out.println("ff " + jsonObject);
 
-            objectInputStream = new ObjectInputStream(socket.getInputStream());
-            String resGeo;
-            String resSchedual;
-            String resInfo;
+                    JSONArray jsonArraySchedual = jsonObject.getJSONArray("schedule");
+                    JSONArray jsonArrayGeo = jsonObject.getJSONArray("geo");
+                    JSONObject jsonInf = jsonObject.getJSONObject("inf");
+                    objectInputStream.close();
 
-            resGeo = (String) objectInputStream.readObject();
-            JSONObject jsonObject = new JSONObject(resGeo);
-            System.out.println("ff "+jsonObject);
+                    WorkWithDb.getWorkWithDb().putGeopointsToDb(jsonArrayGeo);
+                    WorkWithDb.getWorkWithDb().putScheduleToDb(jsonArraySchedual);
+                    WorkWithDb.getWorkWithDb().putInformationToDb(jsonInf);
 
-            JSONArray jsonArraySchedual = jsonObject.getJSONArray("schedule");
-            JSONArray jsonArrayGeo = jsonObject.getJSONArray("geo");
-            JSONObject jsonInf = jsonObject.getJSONObject("inf");
-            objectInputStream.close();
+                    System.out.println("geo" + WorkWithDb.getWorkWithDb().getGeopointList().size());
+                    System.out.println("s" + WorkWithDb.getWorkWithDb().getScheduleList().size());
+                    System.out.println("geo" + WorkWithDb.getWorkWithDb().getInformList().get(0).toString());
+                    STATUS=true;
 
-            WorkWithDb.getWorkWithDb().putGeopointsToDb(jsonArrayGeo);
-            WorkWithDb.getWorkWithDb().putScheduleToDb(jsonArraySchedual);
-            WorkWithDb.getWorkWithDb().putInformationToDb(jsonInf);
-
-            System.out.println("geo" +  WorkWithDb.getWorkWithDb().getGeopointList().size());
-            System.out.println("s" +  WorkWithDb.getWorkWithDb().getScheduleList().size());
-            System.out.println("geo" +  WorkWithDb.getWorkWithDb().getInformList().get(0).toString());
+            //((MainScreen_4)activity).setEnable(btn);
 
 
         } catch (Exception e) {
