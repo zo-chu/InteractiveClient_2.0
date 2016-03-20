@@ -91,6 +91,8 @@ public class  EnterYourNameScreen_2 extends AppCompatActivity {
         if (wifiMgr.isWifiEnabled()){
             ip = WifiUtility.getIpAddress();
         }
+        GetIp getIp = new GetIp(getApplicationContext());
+        getIp.start();
 
 //        GetIp getIp = new GetIp(getApplicationContext());
 //        getIp.start();

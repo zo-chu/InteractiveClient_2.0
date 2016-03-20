@@ -39,7 +39,8 @@ public class WorkWithDb {
     //5. get from Client mes about "getdb"
     //6. set JASON
 
-    private ArrayList<Information> informList;
+    //private ArrayList<Information> informList;
+    private ArrayList<String> informList;
     private ArrayList<Schedule> scheduleList;
     private ArrayList<Geopoint> geopointList;
 
@@ -77,7 +78,7 @@ public class WorkWithDb {
         return notificationList;
     }
 
-    public ArrayList<Information> getInformList() {
+    public ArrayList<String> getInformList() {
         if (informList.size() == 0) {
             getInformation();
         }
@@ -116,6 +117,7 @@ public class WorkWithDb {
         jsonObjectInform = new JSONObject();
         jsonArrayGeo = new JSONArray();
         jsonArraySchedule = new JSONArray();
+        addInformation("load guide name","load guide","load tour","load goal","load");
     }
 
     public static WorkWithDb getWorkWithDb(Context context) {
@@ -131,28 +133,32 @@ public class WorkWithDb {
         return workWithDb;
     }
 
-    private ArrayList<Information> getInformation() {
+    private ArrayList<String> getInformation() {
 
-        GuideInform guideInform;
-        TourInform tourInform;
-        AdditionalInform additionalInform;
+//        GuideInform guideInform;
+//        TourInform tourInform;
+//        AdditionalInform additionalInform;
 
         cursor = db.rawQuery("SELECT * FROM information", null);
         int size = cursor.getCount();
         if (size > 0) {
             try {
-                cursor.moveToFirst();
-                guideInform = new GuideInform(Information.InformType.GUIDE,
-                        cursor.getString(0), cursor.getString(1));
+               cursor.moveToFirst();
+//                guideInform = new GuideInform(Information.InformType.GUIDE,
+//                        cursor.getString(0), cursor.getString(1));
+//
+//                tourInform = new TourInform(Information.InformType.TOUR,
+//                        cursor.getString(2), cursor.getString(3));
+//
+//                additionalInform = new AdditionalInform(Information.InformType.ADD, cursor.getString(4));
 
-                tourInform = new TourInform(Information.InformType.TOUR,
-                        cursor.getString(2), cursor.getString(3));
+                informList.add(0,cursor.getString(1));
+                informList.add(1,cursor.getString(2));
+                informList.add(2,cursor.getString(3));
+                informList.add(3,cursor.getString(4));
+                informList.add(4,cursor.getString(5));
 
-                additionalInform = new AdditionalInform(Information.InformType.ADD, cursor.getString(4));
 
-                informList.add(0, guideInform);
-                informList.add(1, tourInform);
-                informList.add(2, additionalInform);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -251,21 +257,25 @@ public class WorkWithDb {
     public void updateSchedualByIndex(int index, String time, String description) {
         Schedule schedule = scheduleList.get(index);
         db.execSQL("UPDATE schedule set time='" + time + "',description='" + description +
-                " WHERE id=" + index + "");
+                "' WHERE id=" + index + "");
 
         schedule.setTime(time);
         schedule.setDescription(description);
     }
 
-    public void updateInformationByIndex(String guideName, String guidePhone, String tour, String goal) {
-
-        ((GuideInform) informList.get(0)).setFull_name(guideName);
-        ((GuideInform) informList.get(0)).setPhone(guidePhone);
-        ((TourInform) informList.get(1)).setName(tour);
-        ((TourInform) informList.get(1)).setGoal(goal);
+    public void updateInformationByIndex(String guideName, String guidePhone, String tour, String goal,String company) {
+//        ((GuideInform) informList.get(0)).setFull_name(guideName);
+//        ((GuideInform) informList.get(0)).setPhone(guidePhone);
+//        ((TourInform) informList.get(1)).setName(tour);
+//        ((TourInform) informList.get(1)).setGoal(goal);
+        informList.set(0,guideName);
+        informList.set(1,guidePhone);
+        informList.set(2,tour);
+        informList.set(3,goal);
+        informList.set(4, company);
 
         db.execSQL("UPDATE information set guide_name='" + guideName + "', " +
-                "guide_phone='" + guidePhone + "', tour='" + tour + "', goal='" + goal + "'");
+                "guide_phone='" + guidePhone + "', tour='" + tour + "', goal='" + goal + "', company='"+company+"' WHERE id=0");
 
     }
 
@@ -284,9 +294,13 @@ public class WorkWithDb {
 
     }
 
-    public void addInformation(String guideName, String guidePhone, String tour, String goal, String company) {
-        int inf_id = getInformList().size();
-        db.execSQL("INSERT INTO information VALUES ('" + guideName + "', '" + guidePhone + "', '" + tour + "','" + goal + "','" + company + "')");
+    private void addInformation(String guideName, String guidePhone, String tour, String goal, String company) {
+        informList.add(0,guideName);
+        informList.add(1,guidePhone);
+        informList.add(2,tour);
+        informList.add(3,goal);
+        informList.add(4, company);
+        db.execSQL("INSERT INTO information VALUES (0,'" + guideName + "', '" + guidePhone + "', '" + tour + "','" + goal + "','" + company + "')");
 
     }
 
@@ -304,33 +318,57 @@ public class WorkWithDb {
 
     public void putGeopointsToDb(JSONArray jsonArray) {
         Geopoint geopoint;
-        for (int i = 0; i < jsonArray.length(); i++) {
-            try {
-                geopoint = Geopoint.createFromJson(jsonArray.getJSONObject(i));
-                //geopointList.add(geopoint); - am i right ? need to chek dounloading
-                addGeopiont(geopoint.getName(), geopoint.getType(), geopoint.getColor(), geopoint.getCoordinates());
-            } catch (JSONException e) {
-                e.printStackTrace();
+        if (jsonArray.length()+2 == WorkWithDb.getWorkWithDb().getGeopointList().size()) {
+            for (int i = 2; i < jsonArray.length(); i++) {
+                try {
+                    geopoint = Geopoint.createFromJson(jsonArray.getJSONObject(i));
+                    updateGeopointByIndex(i, geopoint.getName(), geopoint.getType(), geopoint.getColor(), geopoint.getCoordinates());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
+        } else {
+            for (int i = 0; i < jsonArray.length(); i++) {
+                try {
+                    geopoint = Geopoint.createFromJson(jsonArray.getJSONObject(i));
+                    addGeopiont(geopoint.getName(), geopoint.getType(), geopoint.getColor(), geopoint.getCoordinates());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
         }
     }
 
     public void putScheduleToDb(JSONArray jsonArray) {
         Schedule schedule;
-        for (int i = 0; i < jsonArray.length(); i++) {
-            try {
-                schedule = Schedule.createFromJson(jsonArray.getJSONObject(i));
-                //scheduleList.add(schedule);
-                addSchedule(schedule.getTime(), schedule.getDescription());
-            } catch (JSONException e) {
-                e.printStackTrace();
+        if(jsonArray.length()==WorkWithDb.getWorkWithDb().getScheduleList().size()) {
+            for (int i = 0; i < jsonArray.length(); i++) {
+                try {
+                    schedule = Schedule.createFromJson(jsonArray.getJSONObject(i));
+                    //scheduleList.add(schedule);
+                    updateSchedualByIndex(i, schedule.getTime(), schedule.getDescription());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }else {
+            for (int i = 0; i < jsonArray.length(); i++) {
+                try {
+                    schedule = Schedule.createFromJson(jsonArray.getJSONObject(i));
+                    //scheduleList.add(schedule);
+                    addSchedule(schedule.getTime(), schedule.getDescription());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
 
+
     public void putInformationToDb(JSONObject jsonObject) {
         try {
-            addInformation(jsonObject.getString("guide_name"), jsonObject.getString("guide_phone"), jsonObject.getString("tour"),
+            updateInformationByIndex(jsonObject.getString("guide_name"), jsonObject.getString("guide_phone"), jsonObject.getString("tour"),
                     jsonObject.getString("goal"), jsonObject.getString("company"));
         } catch (JSONException e) {
             e.printStackTrace();

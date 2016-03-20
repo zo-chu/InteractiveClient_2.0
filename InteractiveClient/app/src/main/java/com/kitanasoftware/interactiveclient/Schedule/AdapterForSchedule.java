@@ -1,6 +1,7 @@
 package com.kitanasoftware.interactiveclient.Schedule;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,13 +27,7 @@ public class AdapterForSchedule extends BaseAdapter {
 
     @Override
     public int getCount() {
-        int x = 0;
-        try {
-            x = WorkWithDb.getWorkWithDb().getScheduleList().size();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return x;
+        return WorkWithDb.getWorkWithDb().getScheduleList().size();
     }
 
 
@@ -57,15 +52,16 @@ public class AdapterForSchedule extends BaseAdapter {
 
         Schedule schedule = WorkWithDb.getWorkWithDb().getScheduleList().get(position);
 
-        TextView tvTime = (TextView) r1.findViewById(R.id.textView3);
-        TextView tvDestination = (TextView) r1.findViewById(R.id.textView4);
+        TextView tvTime = (TextView) r1.findViewById(R.id.tvTime);
+        TextView tvDestination = (TextView) r1.findViewById(R.id.tvDesc);
 
         String time= schedule.getTime();
         String destination = schedule.getDescription();
 
         tvTime.setText(time);
         tvDestination.setText(destination);
-
+        tvDestination.setTextColor(Color.BLACK);
+        tvTime.setTextColor(Color.BLACK);
 
         return r1;
     }

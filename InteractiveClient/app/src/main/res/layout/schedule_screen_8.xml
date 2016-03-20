@@ -16,13 +16,12 @@
         tools:context="com.kitanasoftware.interactiveguide.ScheduleScreen_8">
 
         <ListView
-            android:id="@+id/listView"
+            android:id="@+id/lv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginTop="56dp" />
+            android:layout_below="@+id/textView3" />
 
         <TextView
             android:id="@+id/textView3"
