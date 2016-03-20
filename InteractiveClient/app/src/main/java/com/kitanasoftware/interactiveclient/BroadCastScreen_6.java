@@ -24,28 +24,23 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Spinner;
-import android.widget.TextView;
 
 import com.kitanasoftware.interactiveclient.Broadcast.WifiUtility;
-import com.kitanasoftware.interactiveclient.dataTransfer.StartConn;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class   BroadCastScreen_6 extends DrawerAppCompatActivity {
+public class BroadCastScreen_6 extends DrawerAppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
 
         ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#f8bfd8"));
         getSupportActionBar().setBackgroundDrawable(colorDrawable);
@@ -53,11 +48,8 @@ public class   BroadCastScreen_6 extends DrawerAppCompatActivity {
 
     @Override
     public View getContentView() {
-        return getLayoutInflater().inflate(R.layout.broad_cast_screen_6,null);
+        return getLayoutInflater().inflate(R.layout.broad_cast_screen_6, null);
     }
-
-
-
 
     SharedPreferences sp;
 
@@ -97,28 +89,28 @@ public class   BroadCastScreen_6 extends DrawerAppCompatActivity {
     Bitmap streamingVoice = null;
     Bitmap notStreamingVoice = null;
 
-    
+
     @Override
     public void onResume() {
         super.onResume();
 
-        //Check if device is connected to hotspot.
-        if (!WifiUtility.isWifiConnected(this)){
-            if (!WifiUtility.isHotSpot(this)){
+//Check if device is connected to hotspot.
+        if (!WifiUtility.isWifiConnected(this)) {
+            if (!WifiUtility.isHotSpot(this)) {
                 return;
             }
         }
 
-    //    initializeApp();
-
-        //Only open new threads, if null
-        if (playStream ==null){
+//Only open new threads, if null
+//Only open new threads, if null
+        if (playStream == null) {
             playStream = (PlayStream) new PlayStream().execute();
+            ListenForBroadcasts();
         }
-        if (broadcastIpThread==null){
+        if (broadcastIpThread == null) {
             sendBroadcast();
         }
-        if (listenForBroadcastsThread ==null){
+        if (listenForBroadcastsThread == null) {
             ListenForBroadcasts();
         }
 
@@ -126,7 +118,7 @@ public class   BroadCastScreen_6 extends DrawerAppCompatActivity {
     }
 
     @Override
-    public void onStart(){
+    public void onStart() {
         super.onStart();
     }
 
@@ -139,7 +131,7 @@ public class   BroadCastScreen_6 extends DrawerAppCompatActivity {
     protected void onStop() {
         super.onStop();
 
-        if (stream_play_timer !=null){
+        if (stream_play_timer != null) {
             stream_play_timer.cancel();
         }
 
@@ -155,7 +147,19 @@ public class   BroadCastScreen_6 extends DrawerAppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    //Listen for voice streams and play.
+    public void start(View view) {
+
+        if (playStream == null) {
+            playStream = (PlayStream) new PlayStream().execute();
+            System.out.println(" Pressed start!!!!!! ");
+        }
+    }
+
+    public void stop(View view) {
+
+    }
+
+    //Listen for voice stream and play.
     public class PlayStream extends AsyncTask<String, Integer, String> {
 
         @Override
@@ -168,7 +172,7 @@ public class   BroadCastScreen_6 extends DrawerAppCompatActivity {
             try {
 
                 @SuppressWarnings("resource")
-                //Socket Created
+//Socket Created
                         DatagramSocket socket = new DatagramSocket(VOICE_STREAM_PORT);
 
                 int MIN_BUFFER_SIZE = 8192;
@@ -183,23 +187,25 @@ public class   BroadCastScreen_6 extends DrawerAppCompatActivity {
                         AudioTrack.MODE_STREAM);
                 speaker.play();
 
-                while(status_receiving == true) {
+                while (status_receiving == true) {
                     try {
 
-                        DatagramPacket packet = new DatagramPacket(buffer,buffer.length);
-                        //Packet Received
+                        DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
+//Packet Received
                         socket.receive(packet);
 
-                        //reading content from packet
-                        buffer=packet.getData();
+//reading content from packet
 
-                        //Writing buffer content to Audiotrack (speaker)
+                        buffer = packet.getData();
+                        String ip = packet.getAddress().toString();
+                        System.out.println();
+
+//Writing buffer content to Audiotrack (speaker)
                         speaker.write(buffer, 0, MIN_BUFFER_SIZE);
-
                         OLD_PLAY_RANDOM = LASTEST_PLAY_RANDOM;
                         LASTEST_PLAY_RANDOM = Math.random();
 
-                    } catch(IOException e) {
+                    } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
@@ -210,86 +216,19 @@ public class   BroadCastScreen_6 extends DrawerAppCompatActivity {
 
             return "";
         }
+
         @Override
         protected void onPostExecute(String value) {
             super.onPostExecute(value);
         }
     }
 
-    //Listen to UDP broadcast and update ip list.
-    public void ListenForBroadcasts(){
-        listenForBroadcastsThread = new Thread (new Runnable() {
-            @Override
-            public void run() {
-                try {
-
-                    //Keep socket open to listen to all the UDP traffic that is destined for this port.
-                    socket = new DatagramSocket(5001, InetAddress.getByName("0.0.0.0"));
-                    socket.setBroadcast(true);
-
-                    while (true) {
-
-                        //Receive a packet
-                        byte[] buffer = new byte[15000];
-                        DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
-                        socket.receive(packet);
-
-                        final String sender_ip = packet.getAddress().getHostAddress();
-                        String device_ip = WifiUtility.getIpAddress();
-
-
-                        System.out.println(sender_ip+ "   sender");
-                        System.out.println(device_ip + "     devi");
-
-
-//                        Intent intent2 = new Intent(getApplicationContext(), StartConn.class);
-//                        startService(intent2);
-
-
-                        sp = getSharedPreferences("editor", MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sp.edit();
-                        editor.putString("ip",sender_ip);
-                        editor.commit();
-
-
-                        //if ping is coming from this device, ignore.
-                        if (!sender_ip.equalsIgnoreCase(device_ip)){
-
-                            boolean ip_address_already_exist = false;
-                            //Check if devices exists on the list
-                            for (int i=0; i<devices.size();i++){
-                                if (devices.get(i).equalsIgnoreCase(sender_ip)){
-                                    ip_address_already_exist = true;
-                                }
-                            }
-
-                            if (!ip_address_already_exist){
-
-                                //Update devices list
-                                devices.add(sender_ip);
-
-                                //if device is streaming voice
-                            }
-
-                        }
-
-                    }
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-            }
-        });
-        listenForBroadcastsThread.start();
-    }
-
-
-    //Broadcast this device IP address to other devices on this network.
     public void broadcastIp(final String message) {
-        broadcastIpThread = new Thread (new Runnable() {
+        broadcastIpThread = new Thread(new Runnable() {
             @Override
             public void run() {
 
-                StrictMode.ThreadPolicy policy = new   StrictMode.ThreadPolicy.Builder().permitAll().build();
+                StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
                 StrictMode.setThreadPolicy(policy);
 
                 try {
@@ -310,48 +249,111 @@ public class   BroadCastScreen_6 extends DrawerAppCompatActivity {
         broadcastIpThread.start();
     }
 
-
-    //Send UDP broadcast every 5 seconds.
-    public void sendBroadcast(){
+    public void sendBroadcast() {
         broadcast_timer = new Timer();
-        broadcast_timer.schedule(new TimerTask(){
+        broadcast_timer.schedule(new TimerTask() {
             public void run() {
                 broadcastIp("Ping");
-            }}, 0, BROADCAST_TIME);
+            }
+        }, 0, BROADCAST_TIME);
+    }
+
+    //Listen to UDP broadcast and update ip list.
+    public void ListenForBroadcasts() {
+        listenForBroadcastsThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+
+//Keep socket open to listen to all the UDP traffic that is destined for this port.
+                    socket = new DatagramSocket(5001, InetAddress.getByName("0.0.0.0"));
+                    socket.setBroadcast(true);
+
+                    while (true) {
+
+//Receive a packet
+                        byte[] buffer = new byte[15000];
+                        DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
+                        socket.receive(packet);
+
+                        final String sender_ip = packet.getAddress().getHostAddress();
+                        String device_ip = WifiUtility.getIpAddress();
+
+                        System.out.println(sender_ip + " sender");
+                        System.out.println(device_ip + " devi");
+
+// Intent intent2 = new Intent(getApplicationContext(), StartConn.class);
+// startService(intent2);
+
+                        sp = getSharedPreferences("editor", MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sp.edit();
+                        editor.putString("ip", sender_ip);
+                        editor.commit();
+
+//if ping is coming from this device, ignore.
+                        if (!sender_ip.equalsIgnoreCase(device_ip)) {
+
+                            boolean ip_address_already_exist = false;
+//Check if devices exists on the list
+                            for (int i = 0; i < devices.size(); i++) {
+                                if (devices.get(i).equalsIgnoreCase(sender_ip)) {
+                                    ip_address_already_exist = true;
+                                }
+                            }
+
+                            if (!ip_address_already_exist) {
+
+//Update devices list
+                                devices.add(sender_ip);
+
+//if device is streaming voice
+                            }
+
+                        }
+
+                    }
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+        listenForBroadcastsThread.start();
     }
 
     //Hack
-    //Determine if stream is being played or not.
-    public void monitorStreamPlay(){
+//Determine if stream is being played or not.
+    public void monitorStreamPlay() {
         stream_play_timer = new Timer();
-        stream_play_timer.schedule(new TimerTask(){
+        stream_play_timer.schedule(new TimerTask() {
             public void run() {
 
                 OLD_PLAY_RANDOM = LASTEST_PLAY_RANDOM;//set the stream time random value, playing the stream should change it
 
                 try {
-                    Thread.sleep(1000); //wait one seconds, for change in random reading.
+                    Thread.sleep(1000); //wait one seconds, for change in    random reading.
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
 
-                //Check if updated, or unchanged
-                if (OLD_PLAY_RANDOM == LASTEST_PLAY_RANDOM){//Not streaming voice.
-                    BroadCastScreen_6.this.runOnUiThread(new Runnable(){
+//Check if updated, or unchanged
+                if (OLD_PLAY_RANDOM == LASTEST_PLAY_RANDOM) {//Not streaming voice.
+                    BroadCastScreen_6.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            ((ImageView) findViewById (R.id.button11)).setImageBitmap(notStreamingVoice);
+                            ((ImageView) findViewById(R.id.button11)).setImageBitmap(notStreamingVoice);
                         }
                     });
-                }else{//Streaming voice.
-                    BroadCastScreen_6.this.runOnUiThread(new Runnable(){
+                } else {//Streaming voice.
+                    BroadCastScreen_6.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            ((ImageView) findViewById (R.id.button11)).setImageBitmap(streamingVoice);
+                            ((ImageView) findViewById(R.id.button11)).setImageBitmap(streamingVoice);
                         }
                     });
                 }
 
-            }}, 0, STREAM_PLAY_MONITOR_TIME);
+            }
+        }, 0, STREAM_PLAY_MONITOR_TIME);
     }
+
 }
