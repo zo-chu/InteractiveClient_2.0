@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.kitanasoftware.interactiveclient.DrawerAppCompatActivity;
@@ -34,25 +35,64 @@ import java.util.List;
 
 public class InformatoonScreen_9 extends DrawerAppCompatActivity {
 
-    InformationAdapter adapter;
-    ListView listView;
-    ArrayList<Information> informList;
+   private InformationAdapter adapter;
+    private ListView listView;
+    private ArrayList<String> informList;
+    private TextView name;
+    private TextView phone;
+    private TextView tour;
+    private TextView goal;
+    private TextView company;
 
-    Bitmap bitPhoto;
-    String photoPath;
+    private Bitmap bitPhoto;
+    private String photoPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        setContentView(R.layout.informatoon_screen_9);
         ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#fdc68a"));
         getSupportActionBar().setBackgroundDrawable(colorDrawable);
 
+
+        name = (TextView) findViewById(R.id.guideName);
+        phone = (TextView) findViewById(R.id.guidePhone);
+        tour = (TextView) findViewById(R.id.tour);
+        goal = (TextView) findViewById(R.id.goal);
+        company = (TextView) findViewById(R.id.company);
+
         if(WorkWithDb.getWorkWithDb().getInformList() != null) {
             informList = WorkWithDb.getWorkWithDb().getInformList();
-            adapter = new InformationAdapter(getApplicationContext(), informList);
-            listView = (ListView) findViewById(R.id.lvInform);
-            listView.setAdapter(adapter);
+            name.setText(informList.get(0));
+            phone.setText(informList.get(1));
+            tour.setText(informList.get(2));
+            goal.setText(informList.get(3));
+            company.setText(informList.get(4));
+
+
+//            adapter = new InformationAdapter(getApplicationContext(), informList);
+//            listView = (ListView) findViewById(R.id.lvInform);
+//            listView.setAdapter(adapter);
+
+
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(WorkWithDb.getWorkWithDb().getInformList() != null) {
+//            informList = WorkWithDb.getWorkWithDb().getInformList();
+//            adapter = new InformationAdapter(getApplicationContext(), informList);
+//            listView = (ListView) findViewById(R.id.lvInform);
+//            listView.setAdapter(adapter);
+            name.setText(informList.get(0));
+
+            phone.setText(informList.get(1));
+
+            tour.setText(informList.get(2));
+            goal.setText(informList.get(3));
+            company.setText(informList.get(4));
         }
     }
 
@@ -61,49 +101,6 @@ public class InformatoonScreen_9 extends DrawerAppCompatActivity {
         return getLayoutInflater().inflate(R.layout.informatoon_screen_9, null);
     }
 
-
-    public void invalidateLv() {
-        adapter.setList(informList);
-        listView.setAdapter(adapter);
-        invalidateOptionsMenu();
-        listView.invalidate();
-    }
-
-    public byte[] getBytesFromBitmap(Bitmap bitmap) {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-        return stream.toByteArray();
-    }
-
-    // save foto to SD card
-    public void savePhoto() {
-
-        photoPath = Environment.getExternalStorageDirectory() + "/myPhoto" + System.currentTimeMillis() + ".jpg";
-        FileOutputStream fos = null;
-
-        try {
-            fos = new FileOutputStream(photoPath);
-            bitPhoto.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-            fos.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (fos != null) {
-                try {
-                    fos.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-    }
-
-    public Bitmap getPhotoFromGallery(){
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-        return BitmapFactory.decodeFile(photoPath, options);
-    }
 }
 
 

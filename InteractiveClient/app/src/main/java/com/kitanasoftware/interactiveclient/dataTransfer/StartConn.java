@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.net.wifi.WifiManager;
 import android.os.IBinder;
 import android.text.format.Formatter;
+import android.view.View;
 import android.widget.Toast;
 
 public class StartConn extends Service {
@@ -17,20 +18,24 @@ public class StartConn extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        Toast.makeText(getApplicationContext(), "Service start", Toast.LENGTH_LONG).show();
+        //Toast.makeText(getApplicationContext(), "Service start", Toast.LENGTH_LONG).show();
 
 
-        WifiManager wm = (WifiManager) getSystemService(WIFI_SERVICE);
-        String ip = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
+//        WifiManager wm = (WifiManager) getSystemService(WIFI_SERVICE);
+//        String ip = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
+//
+//        sp = getSharedPreferences("editor", MODE_PRIVATE);
+//        String ipServer = sp.getString("ip","");
 
-        sp = getSharedPreferences("editor", MODE_PRIVATE);
-        String ipServer = sp.getString("ip","");
+//        GetIp getIp = new GetIp(getApplicationContext());
+//        getIp.start();
 
-        ClientConn clientConn = new ClientConn(ip, ipServer);
-        clientConn.start();
+//        ClientConn clientConn = new ClientConn(ip, ipServer);
+//        clientConn.start();
 
-        Intent intent2 = new Intent(getApplicationContext(), StartConn.class);
-        startService(intent2);
+//
+//        Intent intent2 = new Intent(getApplicationContext(), StartConn.class);
+//        startService(intent2);
     }
 
     @Override

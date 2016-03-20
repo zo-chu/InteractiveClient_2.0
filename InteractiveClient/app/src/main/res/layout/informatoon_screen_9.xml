@@ -15,14 +15,54 @@
         android:paddingTop="@dimen/activity_vertical_margin"
         tools:context=".information.InformatoonScreen_9">
 
-        <ListView
-            android:id="@+id/lvInform"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="GUIDE INFORMATION"
+            android:id="@+id/textView2"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="guide name"
+            android:id="@+id/guideName"
+            android:layout_below="@+id/textView2"
+           />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="guide phone"
+            android:id="@+id/guidePhone"
+            android:layout_below="@+id/guideName"
+           />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Tour"
+            android:id="@+id/tour"
+            android:layout_below="@+id/guidePhone"
+           />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="goal for today"
+            android:id="@+id/goal"
+            android:layout_below="@+id/tour"
+           />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Company"
+            android:id="@+id/company"
+            android:layout_below="@+id/goal"
+            />
     </RelativeLayout>
 
     <android.support.design.widget.NavigationView xmlns:android="http://schemas.android.com/apk/res/android"
