@@ -1,8 +1,15 @@
 package com.kitanasoftware.interactiveclient;
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -13,46 +20,24 @@ import android.media.AudioRecord;
 import android.media.AudioTrack;
 import android.media.MediaRecorder;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ImageView;
+import android.view.View.OnClickListener;
+import android.widget.*;
 
-import com.kitanasoftware.interactiveclient.Broadcast.WifiUtility;
+import com.kitanasoftware.interactiveclient.dataTransfer.WifiUtility;
 
-import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
-import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 
-public class BroadCastScreen_6 extends DrawerAppCompatActivity {
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#f8bfd8"));
-        getSupportActionBar().setBackgroundDrawable(colorDrawable);
-    }
-
+public class    BroadCastScreen_6 extends DrawerAppCompatActivity {
     @Override
     public View getContentView() {
-        return getLayoutInflater().inflate(R.layout.broad_cast_screen_6, null);
+        return getLayoutInflater().inflate(R.layout.broad_cast_screen_6,null);
     }
-
-    SharedPreferences sp;
-
     Timer stream_play_timer = new Timer();
     Timer broadcast_timer = new Timer();
     private final long BROADCAST_TIME = 5000;//5 seconds
@@ -89,23 +74,30 @@ public class BroadCastScreen_6 extends DrawerAppCompatActivity {
     Bitmap streamingVoice = null;
     Bitmap notStreamingVoice = null;
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+
+        super.onCreate(savedInstanceState);
+        ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#f8bfd8"));
+        getSupportActionBar().setBackgroundDrawable(colorDrawable);
+    }
 
     @Override
     public void onResume() {
         super.onResume();
 
-//Check if device is connected to hotspot.
+        //Check if device is connected to hotspot.
         if (!WifiUtility.isWifiConnected(this)) {
             if (!WifiUtility.isHotSpot(this)) {
                 return;
             }
         }
 
-//Only open new threads, if null
-//Only open new threads, if null
+        initializeApp();
+
+        //Only open new threads, if null
         if (playStream == null) {
             playStream = (PlayStream) new PlayStream().execute();
-            ListenForBroadcasts();
         }
         if (broadcastIpThread == null) {
             sendBroadcast();
@@ -147,24 +139,79 @@ public class BroadCastScreen_6 extends DrawerAppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void start(View view) {
 
-        if (playStream == null) {
-            playStream = (PlayStream) new PlayStream().execute();
-            System.out.println(" Pressed start!!!!!! ");
+    public void initializeApp() {
+
+        streamingVoice = BitmapFactory.decodeResource(getResources(), R.drawable.audio);
+        notStreamingVoice = BitmapFactory.decodeResource(getResources(), R.drawable.audio_mute);
+
+        ((TextView) findViewById(R.id.item)).setText("Device IP Address: " + WifiUtility.getIpAddress());
+
+        ((Button) findViewById(R.id.start)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                v.setVisibility(View.INVISIBLE);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        v.setVisibility(View.VISIBLE);
+                        sendStream();
+                    }
+                }, 50);
+            }
+        });
+        ((Button) findViewById(R.id.stop)).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                v.setVisibility(View.INVISIBLE);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        v.setVisibility(View.VISIBLE);
+                        stopStream();
+                    }
+                }, 50);
+            }
+        });
+
+    }
+
+    public void stopStream() {
+        status_sending = false;
+        for (int i = 0; i < recorders.size(); i++) {
+            if (recorders.get(i) != null) {
+                recorders.get(i).release();
+            }
         }
     }
 
-    public void stop(View view) {
-
+    public void sendStream() {
+        status_sending = true;
+        for (int i = 0; i < devices.size(); i++) {
+            String device_ip = devices.get(i);
+            sendStream(device_ip);
+        }
     }
 
-    //Listen for voice stream and play.
+    protected void show(String message) {
+        new AlertDialog.Builder(this)
+                .setMessage(message)
+                .setNegativeButton("Okay", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                }).create().show();
+    }
+
+
+    //Listen for voice streams and play.
     public class PlayStream extends AsyncTask<String, Integer, String> {
 
         @Override
         protected void onPreExecute() {
         }
+
+        ;
 
         @Override
         protected String doInBackground(String... params) {
@@ -172,7 +219,7 @@ public class BroadCastScreen_6 extends DrawerAppCompatActivity {
             try {
 
                 @SuppressWarnings("resource")
-//Socket Created
+                //Socket Created
                         DatagramSocket socket = new DatagramSocket(VOICE_STREAM_PORT);
 
                 int MIN_BUFFER_SIZE = 8192;
@@ -191,17 +238,15 @@ public class BroadCastScreen_6 extends DrawerAppCompatActivity {
                     try {
 
                         DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
-//Packet Received
+                        //Packet Received
                         socket.receive(packet);
 
-//reading content from packet
-
+                        //reading content from packet
                         buffer = packet.getData();
-                        String ip = packet.getAddress().toString();
-                        System.out.println();
 
-//Writing buffer content to Audiotrack (speaker)
+                        //Writing buffer content to Audiotrack (speaker)
                         speaker.write(buffer, 0, MIN_BUFFER_SIZE);
+
                         OLD_PLAY_RANDOM = LASTEST_PLAY_RANDOM;
                         LASTEST_PLAY_RANDOM = Math.random();
 
@@ -223,6 +268,142 @@ public class BroadCastScreen_6 extends DrawerAppCompatActivity {
         }
     }
 
+
+    //Send voice stream to a specific device on the network.
+    public void sendStream(final String device_ip) {
+
+
+        Thread sendStreamThread = new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                try {
+
+                    int MIN_BUFFER_SIZE = 8192;
+
+                    @SuppressWarnings("resource")
+                    //Socket Created
+                            DatagramSocket socket = new DatagramSocket();
+
+                    byte[] buffer = new byte[MIN_BUFFER_SIZE];
+
+                    DatagramPacket packet;
+
+                    //Destination Address retrieved.
+                    final InetAddress destination = InetAddress.getByName(device_ip);
+
+                    //Initialize Recorder
+                    AudioRecord recorder = new AudioRecord(MediaRecorder.AudioSource.MIC,
+                            RECORDER_SAMPLE_RATE,
+                            RECORDER_CHANNELS,
+                            RECORDER_AUDIO_ENCODING,
+                            MIN_BUFFER_SIZE * 5);
+
+                    //add to array
+                    recorders.add(recorder);
+                    recorder.startRecording();
+
+                    while (status_sending == true) {
+
+                        //reading data from MIC into buffer
+                        MIN_BUFFER_SIZE = recorder.read(buffer, 0, buffer.length);
+
+                        //putting buffer in the packet
+                        packet = new DatagramPacket(buffer, buffer.length, destination, VOICE_STREAM_PORT);
+
+                        //Send packet
+                        socket.send(packet);
+                    }
+
+                } catch (UnknownHostException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    try {
+                        //socket.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+        });
+        sendStreamThread.start();
+    }
+
+
+    //Listen to UDP broadcast and update ip list.
+    public void ListenForBroadcasts() {
+        listenForBroadcastsThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+
+                    //Keep socket open to listen to all the UDP traffic that is destined for this port.
+                    socket = new DatagramSocket(BROADCAST_IP_PORT, InetAddress.getByName("0.0.0.0"));
+                    socket.setBroadcast(true);
+
+                    while (true) {
+
+                        //Receive a packet
+                        byte[] buffer = new byte[15000];
+                        DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
+                        socket.receive(packet);
+
+                        final String sender_ip = packet.getAddress().getHostAddress();
+                        String device_ip = WifiUtility.getIpAddress();
+
+                        //if ping is coming from this device, ignore.
+                        if (!sender_ip.equalsIgnoreCase(device_ip)) {
+
+                            boolean ip_address_already_exist = false;
+                            //Check if devices exists on the list
+                            for (int i = 0; i < devices.size(); i++) {
+                                if (devices.get(i).equalsIgnoreCase(sender_ip)) {
+                                    ip_address_already_exist = true;
+                                }
+                            }
+
+                            if (!ip_address_already_exist) {
+
+                                //Update devices list
+                                devices.add(sender_ip);
+
+                                //if device is streaming voice
+                                if (status_sending) {//stream to the new device
+                                    sendStream(device_ip);
+                                }
+
+                                //Add device ip to spinner
+                                BroadCastScreen_6.this.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+
+                                        ArrayAdapter<String> ad = new ArrayAdapter<String>(BroadCastScreen_6.this,
+                                                android.R.layout.simple_spinner_item,
+                                                devices.toArray(new String[devices.size()]));
+                                        ad.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
+                                        ((Spinner) findViewById(R.id.target_ips)).setAdapter(null);
+                                        ((Spinner) findViewById(R.id.target_ips)).setAdapter(ad);
+                                        ad.notifyDataSetChanged();
+                                    }
+                                });
+                            }
+
+                        }
+
+                    }
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+        listenForBroadcastsThread.start();
+    }
+
+
+    //Broadcast this device IP address to other devices on this network.
     public void broadcastIp(final String message) {
         broadcastIpThread = new Thread(new Runnable() {
             @Override
@@ -249,6 +430,8 @@ public class BroadCastScreen_6 extends DrawerAppCompatActivity {
         broadcastIpThread.start();
     }
 
+
+    //Send UDP broadcast every 5 seconds.
     public void sendBroadcast() {
         broadcast_timer = new Timer();
         broadcast_timer.schedule(new TimerTask() {
@@ -258,70 +441,8 @@ public class BroadCastScreen_6 extends DrawerAppCompatActivity {
         }, 0, BROADCAST_TIME);
     }
 
-    //Listen to UDP broadcast and update ip list.
-    public void ListenForBroadcasts() {
-        listenForBroadcastsThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-
-//Keep socket open to listen to all the UDP traffic that is destined for this port.
-                    socket = new DatagramSocket(5001, InetAddress.getByName("0.0.0.0"));
-                    socket.setBroadcast(true);
-
-                    while (true) {
-
-//Receive a packet
-                        byte[] buffer = new byte[15000];
-                        DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
-                        socket.receive(packet);
-
-                        final String sender_ip = packet.getAddress().getHostAddress();
-                        String device_ip = WifiUtility.getIpAddress();
-
-                        System.out.println(sender_ip + " sender");
-                        System.out.println(device_ip + " devi");
-
-// Intent intent2 = new Intent(getApplicationContext(), StartConn.class);
-// startService(intent2);
-
-                        sp = getSharedPreferences("editor", MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sp.edit();
-                        editor.putString("ip", sender_ip);
-                        editor.commit();
-
-//if ping is coming from this device, ignore.
-                        if (!sender_ip.equalsIgnoreCase(device_ip)) {
-
-                            boolean ip_address_already_exist = false;
-//Check if devices exists on the list
-                            for (int i = 0; i < devices.size(); i++) {
-                                if (devices.get(i).equalsIgnoreCase(sender_ip)) {
-                                    ip_address_already_exist = true;
-                                }
-                            }
-
-                            if (!ip_address_already_exist) {
-
-//Update devices list
-                                devices.add(sender_ip);
-
-//if device is streaming voice
-                            }
-
-                        }
-
-                    }
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-            }
-        });
-        listenForBroadcastsThread.start();
-    }
-
     //Hack
-//Determine if stream is being played or not.
+    //Determine if stream is being played or not.
     public void monitorStreamPlay() {
         stream_play_timer = new Timer();
         stream_play_timer.schedule(new TimerTask() {
@@ -330,24 +451,24 @@ public class BroadCastScreen_6 extends DrawerAppCompatActivity {
                 OLD_PLAY_RANDOM = LASTEST_PLAY_RANDOM;//set the stream time random value, playing the stream should change it
 
                 try {
-                    Thread.sleep(1000); //wait one seconds, for change in    random reading.
+                    Thread.sleep(1000); //wait one seconds, for change in random reading.
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
 
-//Check if updated, or unchanged
+                //Check if updated, or unchanged
                 if (OLD_PLAY_RANDOM == LASTEST_PLAY_RANDOM) {//Not streaming voice.
                     BroadCastScreen_6.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            ((ImageView) findViewById(R.id.button11)).setImageBitmap(notStreamingVoice);
+                            ((ImageView) findViewById(R.id.indicator)).setImageBitmap(notStreamingVoice);
                         }
                     });
                 } else {//Streaming voice.
                     BroadCastScreen_6.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            ((ImageView) findViewById(R.id.button11)).setImageBitmap(streamingVoice);
+                            ((ImageView) findViewById(R.id.indicator)).setImageBitmap(streamingVoice);
                         }
                     });
                 }
@@ -355,5 +476,4 @@ public class BroadCastScreen_6 extends DrawerAppCompatActivity {
             }
         }, 0, STREAM_PLAY_MONITOR_TIME);
     }
-
 }

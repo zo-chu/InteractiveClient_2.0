@@ -117,7 +117,7 @@ public class WorkWithDb {
         jsonObjectInform = new JSONObject();
         jsonArrayGeo = new JSONArray();
         jsonArraySchedule = new JSONArray();
-        addInformation("load guide name","load guide","load tour","load goal","load");
+        addInformation("Ask guide to send some information!"," "," "," "," ");
     }
 
     public static WorkWithDb getWorkWithDb(Context context) {
@@ -135,30 +135,16 @@ public class WorkWithDb {
 
     private ArrayList<String> getInformation() {
 
-//        GuideInform guideInform;
-//        TourInform tourInform;
-//        AdditionalInform additionalInform;
-
         cursor = db.rawQuery("SELECT * FROM information", null);
         int size = cursor.getCount();
         if (size > 0) {
             try {
-               cursor.moveToFirst();
-//                guideInform = new GuideInform(Information.InformType.GUIDE,
-//                        cursor.getString(0), cursor.getString(1));
-//
-//                tourInform = new TourInform(Information.InformType.TOUR,
-//                        cursor.getString(2), cursor.getString(3));
-//
-//                additionalInform = new AdditionalInform(Information.InformType.ADD, cursor.getString(4));
-
-                informList.add(0,cursor.getString(1));
-                informList.add(1,cursor.getString(2));
-                informList.add(2,cursor.getString(3));
-                informList.add(3,cursor.getString(4));
-                informList.add(4,cursor.getString(5));
-
-
+                cursor.moveToFirst();
+                informList.add(0, cursor.getString(1));
+                informList.add(1, cursor.getString(2));
+                informList.add(2, cursor.getString(3));
+                informList.add(3, cursor.getString(4));
+                informList.add(4, cursor.getString(5));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -263,19 +249,16 @@ public class WorkWithDb {
         schedule.setDescription(description);
     }
 
-    public void updateInformationByIndex(String guideName, String guidePhone, String tour, String goal,String company) {
-//        ((GuideInform) informList.get(0)).setFull_name(guideName);
-//        ((GuideInform) informList.get(0)).setPhone(guidePhone);
-//        ((TourInform) informList.get(1)).setName(tour);
-//        ((TourInform) informList.get(1)).setGoal(goal);
-        informList.set(0,guideName);
-        informList.set(1,guidePhone);
-        informList.set(2,tour);
-        informList.set(3,goal);
+    public void updateInformationByIndex(String guideName, String guidePhone, String tour, String goal, String company) {
+
+        informList.set(0, guideName);
+        informList.set(1, guidePhone);
+        informList.set(2, tour);
+        informList.set(3, goal);
         informList.set(4, company);
 
         db.execSQL("UPDATE information set guide_name='" + guideName + "', " +
-                "guide_phone='" + guidePhone + "', tour='" + tour + "', goal='" + goal + "', company='"+company+"' WHERE id=0");
+                "guide_phone='" + guidePhone + "', tour='" + tour + "', goal='" + goal + "', company='" + company + "' WHERE id=0");
 
     }
 
@@ -295,10 +278,10 @@ public class WorkWithDb {
     }
 
     private void addInformation(String guideName, String guidePhone, String tour, String goal, String company) {
-        informList.add(0,guideName);
-        informList.add(1,guidePhone);
-        informList.add(2,tour);
-        informList.add(3,goal);
+        informList.add(0, guideName);
+        informList.add(1, guidePhone);
+        informList.add(2, tour);
+        informList.add(3, goal);
         informList.add(4, company);
         db.execSQL("INSERT INTO information VALUES (0,'" + guideName + "', '" + guidePhone + "', '" + tour + "','" + goal + "','" + company + "')");
 
@@ -306,7 +289,7 @@ public class WorkWithDb {
 
     public void addNotification(String sentTo, String text) {
         int index = getNotificationList().size();
-        getScheduleList().add(new Schedule(sentTo, text));
+        getNotificationList().add(new MyNotification(sentTo, text));
         db.execSQL("INSERT INTO notifications VALUES (" + index + ", '" + sentTo + "', '" + text + "')");
 
     }
@@ -317,32 +300,35 @@ public class WorkWithDb {
     }
 
     public void putGeopointsToDb(JSONArray jsonArray) {
+
         Geopoint geopoint;
-        if (jsonArray.length()+2 == WorkWithDb.getWorkWithDb().getGeopointList().size()) {
-            for (int i = 2; i < jsonArray.length(); i++) {
-                try {
+        Geopoint geopointGuide = null;
+
+        try {
+            geopointGuide = Geopoint.createFromJson(jsonArray.getJSONObject(0));
+
+            if (jsonArray.length() + 2 == WorkWithDb.getWorkWithDb().getGeopointList().size()) {
+                for (int i = 2; i < jsonArray.length(); i++) {
                     geopoint = Geopoint.createFromJson(jsonArray.getJSONObject(i));
                     updateGeopointByIndex(i, geopoint.getName(), geopoint.getType(), geopoint.getColor(), geopoint.getCoordinates());
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
-            }
-        } else {
-            for (int i = 0; i < jsonArray.length(); i++) {
-                try {
+                updateGeopointByIndex(0, geopointGuide.getName(), geopointGuide.getType(), geopointGuide.getColor(), geopointGuide.getCoordinates());
+            } else if (jsonArray.length() + 2 > WorkWithDb.getWorkWithDb().getGeopointList().size()) {
+                for (int i = WorkWithDb.getWorkWithDb().getGeopointList().size() - 1; i < jsonArray.length(); i++) {
                     geopoint = Geopoint.createFromJson(jsonArray.getJSONObject(i));
                     addGeopiont(geopoint.getName(), geopoint.getType(), geopoint.getColor(), geopoint.getCoordinates());
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
+                updateGeopointByIndex(0, geopointGuide.getName(), geopointGuide.getType(), geopointGuide.getColor(), geopointGuide.getCoordinates());
             }
-
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 
+
     public void putScheduleToDb(JSONArray jsonArray) {
         Schedule schedule;
-        if(jsonArray.length()==WorkWithDb.getWorkWithDb().getScheduleList().size()) {
+        if (jsonArray.length() == WorkWithDb.getWorkWithDb().getScheduleList().size()) {
             for (int i = 0; i < jsonArray.length(); i++) {
                 try {
                     schedule = Schedule.createFromJson(jsonArray.getJSONObject(i));
@@ -352,7 +338,7 @@ public class WorkWithDb {
                     e.printStackTrace();
                 }
             }
-        }else {
+        } else {
             for (int i = 0; i < jsonArray.length(); i++) {
                 try {
                     schedule = Schedule.createFromJson(jsonArray.getJSONObject(i));

@@ -19,8 +19,9 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="GUIDE INFORMATION"
+            android:text="My guide"
             android:id="@+id/textView2"
+            style="@style/mapEditText"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true" />
 
@@ -28,6 +29,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="guide name"
+            style="@style/mapEditText"
             android:id="@+id/guideName"
             android:layout_below="@+id/textView2"
            />
@@ -36,6 +38,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="guide phone"
+            style="@style/mapEditText"
             android:id="@+id/guidePhone"
             android:layout_below="@+id/guideName"
            />
@@ -43,7 +46,8 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Tour"
+            android:text="My tour"
+            style="@style/mapEditText"
             android:id="@+id/tour"
             android:layout_below="@+id/guidePhone"
            />
@@ -53,6 +57,7 @@
             android:layout_height="wrap_content"
             android:text="goal for today"
             android:id="@+id/goal"
+            style="@style/mapEditText"
             android:layout_below="@+id/tour"
            />
 
@@ -60,6 +65,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Company"
+            style="@style/mapEditText"
             android:id="@+id/company"
             android:layout_below="@+id/goal"
             />

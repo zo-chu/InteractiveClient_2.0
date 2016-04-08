@@ -50,7 +50,6 @@ public class InformatoonScreen_9 extends DrawerAppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.informatoon_screen_9);
         ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#fdc68a"));
         getSupportActionBar().setBackgroundDrawable(colorDrawable);
 

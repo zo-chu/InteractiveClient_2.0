@@ -1,6 +1,5 @@
 package com.kitanasoftware.interactiveclient;
 
-import android.app.ActionBar;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -9,20 +8,14 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.format.Formatter;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 
-import com.kitanasoftware.interactiveclient.Broadcast.WifiUtility;
-import com.kitanasoftware.interactiveclient.dataTransfer.GetIp;
-import com.kitanasoftware.interactiveclient.dataTransfer.StartConn;
+import com.kitanasoftware.interactiveclient.dataTransfer.WifiUtility;
 import com.kitanasoftware.interactiveclient.db.WorkWithDb;
 
 import java.net.InetAddress;
@@ -91,11 +84,7 @@ public class  EnterYourNameScreen_2 extends AppCompatActivity {
         if (wifiMgr.isWifiEnabled()){
             ip = WifiUtility.getIpAddress();
         }
-        GetIp getIp = new GetIp(getApplicationContext());
-        getIp.start();
 
-//        GetIp getIp = new GetIp(getApplicationContext());
-//        getIp.start();
 
 
         sp = getSharedPreferences("editor", MODE_PRIVATE);

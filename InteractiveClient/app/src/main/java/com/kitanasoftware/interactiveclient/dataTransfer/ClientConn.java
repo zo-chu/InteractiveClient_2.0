@@ -59,15 +59,13 @@ public class ClientConn extends Thread{
         Socket socket = null;
         try {
 
-                    socket = new Socket(serverIp, 5002);
+                    socket = new Socket(serverIp, 5010);
                     PrintWriter pw = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
                     pw.println(ip);
                     pw.flush();
                     System.out.println("Get db");
                     objectInputStream = new ObjectInputStream(socket.getInputStream());
                     String resGeo;
-                    String resSchedual;
-                    String resInfo;
 
                     resGeo = (String) objectInputStream.readObject();
                     JSONObject jsonObject = new JSONObject(resGeo);
@@ -86,9 +84,6 @@ public class ClientConn extends Thread{
                     System.out.println("s" + WorkWithDb.getWorkWithDb().getScheduleList().size());
                     System.out.println("geo" + WorkWithDb.getWorkWithDb().getInformList().get(0).toString());
                     STATUS=true;
-
-            //((MainScreen_4)activity).setEnable(btn);
-
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -1,4 +1,4 @@
-package com.kitanasoftware.interactiveclient.Broadcast;
+package com.kitanasoftware.interactiveclient.dataTransfer;
 
 import android.content.Context;
 import android.net.ConnectivityManager;

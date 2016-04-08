@@ -34,9 +34,11 @@ public class SmsReceiver extends BroadcastReceiver {
                 int ind = location.lastIndexOf("[");
                 location = location.substring(ind + 1, location.length() - 1);
 
-                int end = themess.lastIndexOf("My location");
+                int end = (location.lastIndexOf("["))+11;
                 themess = themess.substring(0, end);
             }
+
+            System.out.println(themess + " this is "+ location);
             WorkWithDb.getWorkWithDb().addNotification("Guide", themess);
             Intent i = new Intent(context, MapScreen_5.class);
             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

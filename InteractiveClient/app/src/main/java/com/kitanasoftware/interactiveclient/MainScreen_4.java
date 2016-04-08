@@ -21,8 +21,8 @@ import com.kitanasoftware.interactiveclient.notification.NotificationScreen_7;
 
 
 public class  MainScreen_4 extends AppCompatActivity {
-    private String device_ip;
-    private String server_ip;
+    private String device_ip="";
+    private String server_ip="";
     View btn;
     Intent intent;
     boolean s;
@@ -76,17 +76,21 @@ public class  MainScreen_4 extends AppCompatActivity {
         //btn=findViewById(R.id.route);
         //btn.setEnabled(false);
 
-        SharedPreferences sp;
-        sp = getApplicationContext().getSharedPreferences("editor", getApplicationContext().MODE_PRIVATE);
-        SharedPreferences.Editor editor = sp.edit();
-        sp.getString("ip", server_ip);
-        sp.getString("device_ip",device_ip);
-        editor.commit();
 
-        if(ClientConn.isSTATUS()) {
-            ClientConn clientConn = new ClientConn(device_ip, server_ip);
-            clientConn.start();
-            ClientConn.setSTATUS(false);
+
+        if(GetIp.isSTATUS()) {
+//            SharedPreferences sp;
+//            sp = getApplicationContext().getSharedPreferences("editor", getApplicationContext().MODE_PRIVATE);
+//            SharedPreferences.Editor editor = sp.edit();
+//            sp.getString("ip", server_ip);
+//            sp.getString("device_ip",device_ip);
+//            editor.commit();
+            GetIp getIp = new GetIp(getApplicationContext());
+            getIp.start();
+//            ClientConn clientConn = new ClientConn(device_ip, server_ip);
+//            clientConn.start();
+            GetIp.setSTATUS(false);
+            Toast.makeText(getApplicationContext(), "Downloading....", Toast.LENGTH_LONG).show();
         }else Toast.makeText(getApplicationContext(), "Downloading has started", Toast.LENGTH_LONG).show();
         return super.onOptionsItemSelected(item);
     }
