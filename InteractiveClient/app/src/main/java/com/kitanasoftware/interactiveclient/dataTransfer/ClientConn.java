@@ -58,32 +58,44 @@ public class ClientConn extends Thread{
 
         Socket socket = null;
         try {
+            System.out.println("Try to connect to Guide with ip:" + serverIp);
+            // connects to Guide on port 5010, where Guide sent ip
+            socket = new Socket(serverIp, 5010);
 
-                    socket = new Socket(serverIp, 5010);
-                    PrintWriter pw = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
-                    pw.println(ip);
-                    pw.flush();
-                    System.out.println("Get db");
-                    objectInputStream = new ObjectInputStream(socket.getInputStream());
-                    String resGeo;
+            // send to Guide Ip
+            PrintWriter pw = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
+            pw.println(ip);
+            pw.flush();
+            System.out.println("Getting db from Guide");
+            objectInputStream = new ObjectInputStream(socket.getInputStream());
+            String resGeo;
 
-                    resGeo = (String) objectInputStream.readObject();
-                    JSONObject jsonObject = new JSONObject(resGeo);
-                    System.out.println("ff " + jsonObject);
+            //get JSON object from Guide
+            resGeo = (String) objectInputStream.readObject();
+            JSONObject jsonObject = new JSONObject(resGeo);
+            System.out.println("Got JASON: " + jsonObject);
 
-                    JSONArray jsonArraySchedual = jsonObject.getJSONArray("schedule");
-                    JSONArray jsonArrayGeo = jsonObject.getJSONArray("geo");
-                    JSONObject jsonInf = jsonObject.getJSONObject("inf");
-                    objectInputStream.close();
+            // parsing JSON
+            // get schedule
+            JSONArray jsonArraySchedual = jsonObject.getJSONArray("schedule");
+            System.out.println("Schedule  JASON: " + jsonArraySchedual);
 
-                    WorkWithDb.getWorkWithDb().putGeopointsToDb(jsonArrayGeo);
-                    WorkWithDb.getWorkWithDb().putScheduleToDb(jsonArraySchedual);
-                    WorkWithDb.getWorkWithDb().putInformationToDb(jsonInf);
+            // get geopoints
+            JSONArray jsonArrayGeo = jsonObject.getJSONArray("geo");
+            System.out.println("Geopoints  JASON: " + jsonArrayGeo);
 
-                    System.out.println("geo" + WorkWithDb.getWorkWithDb().getGeopointList().size());
-                    System.out.println("s" + WorkWithDb.getWorkWithDb().getScheduleList().size());
-                    System.out.println("geo" + WorkWithDb.getWorkWithDb().getInformList().get(0).toString());
-                    STATUS=true;
+            //get information
+            JSONObject jsonInf = jsonObject.getJSONObject("inf");
+            System.out.println("information JASON: " + jsonInf);
+            objectInputStream.close();
+
+            //putting Guide's DB to Client
+            WorkWithDb.getWorkWithDb().putGeopointsToDb(jsonArrayGeo);
+            WorkWithDb.getWorkWithDb().putScheduleToDb(jsonArraySchedual);
+            WorkWithDb.getWorkWithDb().putInformationToDb(jsonInf);
+
+            // STATUS allows to start sending again
+            STATUS=true;
 
         } catch (Exception e) {
             e.printStackTrace();
