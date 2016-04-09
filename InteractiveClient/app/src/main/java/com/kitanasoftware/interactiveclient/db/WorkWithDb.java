@@ -53,13 +53,22 @@ public class WorkWithDb {
     private JSONArray jsonArraySchedule;
     private ArrayList<MyNotification> notificationList;
 
+
+
+    // gets Notifications from db, if it is first time,
+    // otherwise works with ArrayList, witch was downloaded before
     public ArrayList<MyNotification> getNotificationList() {
+        if(notificationList==null){
+            notificationList=new ArrayList<>();
+        }
+
         if (notificationList.size() == 0) {
             getNotifications();
         }
         return notificationList;
     }
 
+    // getting Notifications from db
     private ArrayList<MyNotification> getNotifications() {
         String sentTo;
         String text;
@@ -78,33 +87,56 @@ public class WorkWithDb {
         return notificationList;
     }
 
+    // gets Information from db, if it is first time,
+    // otherwise works with ArrayList, witch was downloaded before
     public ArrayList<String> getInformList() {
-        if (informList.size() == 0) {
-            getInformation();
+        if(informList==null){
+            informList=new ArrayList<>();
         }
+
+        if (informList.size() == 0) {
+             getInformation();
+        }
+
         return informList;
     }
 
+    // Arrays for IPs, but don't use if yet
     public HashSet<String> getIpList() {
+        if(ipList==null){
+            ipList=new HashSet<>();
+        }
+
         if (ipList.size() == 0) {
             getClientIp();
         }
         return ipList;
     }
 
+    // gets Geopoints from db, if it is first time,
+    // otherwise works with ArrayList, witch was downloaded before
     public ArrayList<Geopoint> getGeopointList() {
+        if(geopointList==null){
+            geopointList=new ArrayList<>();
+        }
         if (geopointList.size() == 0) {
             getGeopoints();
         }
         return geopointList;
     }
 
+    // gets Schedule from db, if it is first time,
+    // otherwise works with ArrayList, witch was downloaded before
     public ArrayList<Schedule> getScheduleList() {
+        if(geopointList==null){
+            geopointList=new ArrayList<>();
+        }
         if (scheduleList.size() == 0) {
             getSchedule();
         }
         return scheduleList;
     }
+
 
     private WorkWithDb(Context context) {
         myOH = new MyOH(context);
@@ -133,6 +165,7 @@ public class WorkWithDb {
         return workWithDb;
     }
 
+    // getting Information from db
     private ArrayList<String> getInformation() {
 
         cursor = db.rawQuery("SELECT * FROM information", null);
@@ -154,6 +187,7 @@ public class WorkWithDb {
         return informList;
     }
 
+    //getting Schedule from db
     private ArrayList<Schedule> getSchedule() {
         String time;
         String description;
@@ -179,6 +213,7 @@ public class WorkWithDb {
         return jsonObjectInform;
     }
 
+    //getting IPs from db
     private HashSet<String> getClientIp() {
         String ip;
 
@@ -199,6 +234,7 @@ public class WorkWithDb {
         return ipList;
     }
 
+    //getting Geopoints from db
     private ArrayList<Geopoint> getGeopoints() {
         //int id; // ! add to Geopoint
         String name;
@@ -226,6 +262,8 @@ public class WorkWithDb {
         return geopointList;
     }
 
+    //updating geopoints in db and in ArraysList,
+    // witch contains it, when program works
     public void updateGeopointByIndex(int index, String name, String type, int color, double[] coordinates) {
         if (geopointList.size() != 0) {
             Geopoint geopoint = geopointList.get(index);
@@ -240,6 +278,8 @@ public class WorkWithDb {
         }
     }
 
+    //updating schedule in db and in ArraysList,
+    // witch contains it, when program works
     public void updateSchedualByIndex(int index, String time, String description) {
         Schedule schedule = scheduleList.get(index);
         db.execSQL("UPDATE schedule set time='" + time + "',description='" + description +
@@ -249,6 +289,8 @@ public class WorkWithDb {
         schedule.setDescription(description);
     }
 
+    //updating information in db and in ArraysList,
+    // witch contains it, when program works
     public void updateInformationByIndex(String guideName, String guidePhone, String tour, String goal, String company) {
 
         informList.set(0, guideName);
@@ -262,6 +304,8 @@ public class WorkWithDb {
 
     }
 
+    //adding geopoints in db and in ArraysList,
+    // witch contains it, when program works
     public void addGeopiont(String name, String type, int color, double[] coordinates) {
         int index = getGeopointList().size();
         getGeopointList().add(new Geopoint(name, type, color, coordinates));
@@ -270,6 +314,8 @@ public class WorkWithDb {
 
     }
 
+    //adding schedule in db and in ArraysList,
+    // witch contains it, when program works
     public void addSchedule(String time, String description) {
         int index = getScheduleList().size();
         getScheduleList().add(new Schedule(time, description));
@@ -277,6 +323,8 @@ public class WorkWithDb {
 
     }
 
+    //adding information in db and in ArraysList,
+    // witch contains it, when program works
     private void addInformation(String guideName, String guidePhone, String tour, String goal, String company) {
         informList.add(0, guideName);
         informList.add(1, guidePhone);
@@ -287,6 +335,8 @@ public class WorkWithDb {
 
     }
 
+    //adding notifications in db and in ArraysList,
+    // witch contains it, when program works
     public void addNotification(String sentTo, String text) {
         int index = getNotificationList().size();
         getNotificationList().add(new MyNotification(sentTo, text));
@@ -294,11 +344,15 @@ public class WorkWithDb {
 
     }
 
+    //adding IPs in db and in ArraysList,
+    // witch contains it, when program works
     public void addIp(String ip) {
         int inf_id = getIpList().size();
         db.execSQL("INSERT INTO mygroup VALUES ('" + inf_id + "','" + ip + "')");
     }
 
+    //put geopoints from Guide to db and to ArraysList,
+    // witch contains it, when program works
     public void putGeopointsToDb(JSONArray jsonArray) {
 
         Geopoint geopoint;
@@ -325,7 +379,8 @@ public class WorkWithDb {
         }
     }
 
-
+    //put schedule from Guide to db and to ArraysList,
+    // witch contains it, when program works
     public void putScheduleToDb(JSONArray jsonArray) {
         Schedule schedule;
         if (jsonArray.length() == WorkWithDb.getWorkWithDb().getScheduleList().size()) {
@@ -351,7 +406,8 @@ public class WorkWithDb {
         }
     }
 
-
+    //put information from Guide to db and to ArraysList,
+    // witch contains it, when program works
     public void putInformationToDb(JSONObject jsonObject) {
         try {
             updateInformationByIndex(jsonObject.getString("guide_name"), jsonObject.getString("guide_phone"), jsonObject.getString("tour"),
