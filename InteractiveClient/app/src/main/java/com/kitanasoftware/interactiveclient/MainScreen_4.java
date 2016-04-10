@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.kitanasoftware.interactiveclient.dataTransfer.ClientConn;
 import com.kitanasoftware.interactiveclient.dataTransfer.GetIp;
 import com.kitanasoftware.interactiveclient.dataTransfer.StartConn;
+import com.kitanasoftware.interactiveclient.db.WorkWithDb;
 import com.kitanasoftware.interactiveclient.information.InformatoonScreen_9;
 import com.kitanasoftware.interactiveclient.map.MapScreen_5;
 import com.kitanasoftware.interactiveclient.notification.NotificationScreen_7;
@@ -34,6 +35,7 @@ public class  MainScreen_4 extends AppCompatActivity {
         s=true;
         ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#127e83"));
         getSupportActionBar().setBackgroundDrawable(colorDrawable);
+        WorkWithDb.getWorkWithDb(getApplicationContext());
 
     }
 

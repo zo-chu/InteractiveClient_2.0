@@ -61,67 +61,80 @@ public class GetIp extends Thread {
         try {
             //getting ip from Guide
             System.out.println("Waiting for Ip");
+
+            //connects to port 5003
             socket = new DatagramSocket(IP_PORT, InetAddress.getByName("0.0.0.0"));
+            System.out.println("connecting to  " + InetAddress.getByName("0.0.0.0").toString());
             socket.setBroadcast(true);
 
             while (flag) {
 
                 //Receive a packet
+                //creates byte array for packet,witch will receive
                 byte[] buffer = new byte[15000];
+
+                //packet for  receiving
                 DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
                 socket.receive(packet);
-                System.out.println("Receiving dataramPocket");
+
+                System.out.println("received packet: " + packet);
+                // get Guide IP from packet
                 sender_ip = packet.getAddress().getHostAddress();
+
+                // get Client IP
                 device_ip= WifiUtility.getIpAddress();
-                System.out.println("get ip");
                 socket.close();
 
-                System.out.println(sender_ip + "   sender");
-                System.out.println(device_ip + "     devi");
+                System.out.println(sender_ip + " - GUIDE IP");
+                System.out.println(device_ip + " - CLIENT IP");
 
-//            sp = context.getSharedPreferences("editor", context.MODE_PRIVATE);
-//            SharedPreferences.Editor editor = sp.edit();
-//            editor.putString("ip", sender_ip);
-//            editor.putString("device_ip", device_ip);
-//            editor.commit();
+                //save IPs to SharedPreferences
+                sp = context.getSharedPreferences("editor", context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sp.edit();
+                editor.putString("ip", sender_ip);
+                editor.putString("device_ip", device_ip);
+                editor.commit();
 
-//                ClientConn clientConn = new ClientConn(device_ip, sender_ip);
-//                clientConn.start();
-//                ClientConn.setSTATUS(false);
-//                flag=false;
-//
-                //getting db from Guide
-
-                //Socket socket2 = null;
+                System.out.println("Try to connect to Guide with ip:" + sender_ip);
+                // connects to Guide on port 5010, where Guide sent ip
                 socket2 = new Socket(sender_ip, DB_PORT);
+
+                // send to Guide Ip
                 PrintWriter pw = new PrintWriter(new OutputStreamWriter(socket2.getOutputStream()));
                 pw.println(device_ip);
                 pw.flush();
-                System.out.println("Get db");
+
+                System.out.println("Getting db from Guide");
                 objectInputStream = new ObjectInputStream(socket2.getInputStream());
                 String resGeo;
 
-
+                //get JSON object from Guide
                 resGeo = (String) objectInputStream.readObject();
                 socket2.close();
 
-
                 JSONObject jsonObject = new JSONObject(resGeo);
-                System.out.println("ff " + jsonObject);
+                System.out.println("Got JSON: " + jsonObject);
+
+                // parsing JSON
+                // get schedule
                 JSONArray jsonArraySchedual = jsonObject.getJSONArray("schedule");
+                System.out.println("Schedule  JSON: " + jsonArraySchedual);
+
+                // get geopoints
                 JSONArray jsonArrayGeo = jsonObject.getJSONArray("geo");
+                System.out.println("Geopoints  JSON: " + jsonArrayGeo);
+
+                //get information
                 JSONObject jsonInf = jsonObject.getJSONObject("inf");
+                System.out.println("information JSON: " + jsonInf);
                 objectInputStream.close();
 
+                //putting Guide's DB to Client
                 WorkWithDb.getWorkWithDb().putGeopointsToDb(jsonArrayGeo);
                 WorkWithDb.getWorkWithDb().putScheduleToDb(jsonArraySchedual);
                 WorkWithDb.getWorkWithDb().putInformationToDb(jsonInf);
 
-                System.out.println("geo" + WorkWithDb.getWorkWithDb().getGeopointList().size());
-                System.out.println("s" + WorkWithDb.getWorkWithDb().getScheduleList().size());
-                System.out.println("geo" + WorkWithDb.getWorkWithDb().getInformList().get(0).toString());
-
-                //ready to next
+                // STATUS allows to start sending again
                 STATUS=true;
 
                 flag=false;
